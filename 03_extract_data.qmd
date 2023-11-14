@@ -1,6 +1,5 @@
 ---
 title: "Initial data extraction"
-keep-md: true
 fig-width: 10
 fig-asp: 0.6
 ---
@@ -79,10 +78,40 @@ Nope!
 move(v)
 ```
 
+:::{.panel-tabset}
+
+### Summarize visits by hour
+
+Now we'll summarize the visits by date, hour, logger id, and bird id.
+
+Remember that `length` is in seconds, and `time2next` is in minutes.
+```{r}
+#| warning: false
+vs_hr <- v |>
+  mutate(hour = hour(start)) |>
+  group_by(animal_id, logger_id, date, hour, sex) |>
+  summarize(start_visits = min(start), end_visits = max(end), 
+            visits_n = n(), 
+            min_len = min(length), max_len = max(length), mean_len = mean(length),
+            median_len = median(length),
+            min_t2next = min(time2next, na.rm = TRUE), max_next = max(time2next, na.rm = TRUE), 
+            mean_t2next = mean(time2next, na.rm = TRUE),
+            median_t2next = median(time2next, na.rm = TRUE), .groups = "drop")
+```
+
+
+### Preview
+
+```{r}
+slice(vs_hr, 20) |>
+  gt()
+```
+:::
+
 
 :::{.panel-tabset}
 
-### Summarize visits
+### Summarize visits overall
 
 Now we'll summarize the visits by date, logger id, and bird id.
 
@@ -107,7 +136,8 @@ Generally the next visit is within 15 minutes.
 ### Preview
 
 ```{r}
-gt(vs)
+slice(vs, 30) |>
+  gt()
 ```
 :::
 
@@ -127,10 +157,35 @@ p <- presence(v, bw = 15) |>
   relocate(length, time2next, .before = "logger_n")
 ```
 
+:::{.panel-tabset}
+
+### Summarize presence by hour
+
+And as with visits we'll summarize the presence bouts too.
+```{r}
+ps_hr <- p |>
+  mutate(hour = hour(start)) |>
+  group_by(animal_id, logger_id, date, hour, sex) |>
+  summarize(start_presence = min(start), end_presence = max(end), 
+            bouts_n = n(), 
+            min_len = min(length), max_len = max(length), mean_len = mean(length),
+            median_len = median(length), total_length = sum(length),
+            min_t2next = min(time2next, na.rm = TRUE), max_next = max(time2next, na.rm = TRUE), 
+            mean_t2next = mean(time2next, na.rm = TRUE),
+            median_t2next = median(time2next, na.rm = TRUE), .groups = "drop")
+```
+
+### Preview
+
+```{r}
+slice(ps_hr, 30) |>
+  gt()
+```
+:::
 
 :::{.panel-tabset}
 
-### Summarize presence
+### Summarize presence overall
 
 And as with visits we'll summarize the presence bouts too.
 ```{r}
@@ -148,7 +203,8 @@ ps <- p |>
 ### Preview
 
 ```{r}
-gt(ps)
+slice(ps, 30) |>
+  gt()
 ```
 :::
 
@@ -160,13 +216,18 @@ before saving the summary.
 
 ```{r}
 v <- filter(v, logger_id != "KC07")
+vs_hr  <- filter(vs_hr, logger_id != "KC07")
 vs  <- filter(vs, logger_id != "KC07")
+
 p  <- filter(p, logger_id != "KC07")
+ps_hr  <- filter(ps_hr, logger_id != "KC07")
 ps  <- filter(ps, logger_id != "KC07")
 
 write_csv(v, "Data/Datasets/visits.csv")
+write_csv(vs_hr, "Data/Datasets/visits_summary_hour.csv")
 write_csv(vs, "Data/Datasets/visits_summary.csv")
 write_csv(p, "Data/Datasets/presence.csv")
+write_csv(ps_hr, "Data/Datasets/presence_summary_hour.csv")
 write_csv(ps, "Data/Datasets/presence_summary.csv")
 ```
 
@@ -175,13 +236,14 @@ write_csv(ps, "Data/Datasets/presence_summary.csv")
 - `logger_id` - Nest box with the logger
 - `date` - Date of the read
 - `start`/`end` - Start/End time of the visit/presence bout
-- `start_XXX`/`end_XXX` - Start/End times of the *first* and *last* visit/presence bout of the day (`visit`/`presence`).
+- `hour` - Hour of the start of the visit/presence bout
+- `start_XXX`/`end_XXX` - Start/End times of the *first* and *last* visit/presence bout of the day/hour (`visit`/`presence`).
 - `length` - Duration in **seconds** of the visit/presence bout
 - `time2next` - Time in **minutes** to the next visit/presence bout
-- `visits_n`/`bouts_n` - Daily number of visits/presence bouts
+- `visits_n`/`bouts_n` - Daily/Hourly number of visits/presence bouts
 - `animal_n` - Number of animals in the data
 - `logger_n` - Number of loggers in the data
-- `min_XXX`/`max_XXX`/`median_XXX`/`mean_XXX` - Daily Min/Max/Median/Mean of the measure in question (`len` = `length`, `t2next` = `time2next`)
+- `min_XXX`/`max_XXX`/`median_XXX`/`mean_XXX` - Daily/Hourly Min/Max/Median/Mean of the measure in question (`len` = `length`, `t2next` = `time2next`)
 - `sex` - Sex of the animal_id
 - `egg_date` - Date from the metadata of when eggs were laid
 - `hatch_date` - Date from the metadata of when eggs were hatched (NA for nest failure)
