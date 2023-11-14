@@ -1,0 +1,263 @@
+---
+title: "Initial data extraction"
+keep-md: true
+fig-width: 10
+fig-asp: 0.6
+---
+
+In this script we'll summarize our data into visits and bouts of presence. 
+We'll save these data for analysis and take a look at the patterns to make sure
+we have a good idea of what's going on.
+
+
+## Setup
+
+First load the data etc.
+
+```{r}
+#| message: false
+library(tidyverse)
+library(feedr)
+library(gt)
+
+d <- read_csv("Data/Datasets/logger_clean.csv")
+m <- read_csv("Data/Datasets/meta_clean.csv")
+
+d <- left_join(d, select(m, animal_id, sex, egg_date, hatch_date, fledge_date), by = "animal_id") |>
+  mutate(eggs = date >= egg_date & date <= hatch_date,
+         hatchlings = date >= hatch_date & date <= fledge_date,
+         fledglings = date >= fledge_date)
+```
+
+## Visits
+
+Visits are defined as a single 'visit' to the logger. In this case this will 
+generally reflect the individual entering or exiting the nest box. 
+
+First we need to get an idea of how many seconds are typically between reads.
+This can be defined by the user when setting up the logger, but we can also 
+check the data to see what seems most reasonable.
+
+```{r}
+#| fig-width: 12
+#| fig-asp: 1
+bw <- d |>
+  group_by(logger_id) |>
+  mutate(diff = as.numeric(difftime(lead(time), time, units = "secs")))
+
+summary(bw$diff)
+  
+ggplot(data = filter(bw, diff < 25), aes(x = diff)) +
+  geom_histogram(binwidth = 1) +
+  facet_wrap(~logger_id, scales = "free") +
+  labs(title = "Histograms of the time in seconds between logger reads in the data")
+```
+
+KC57 is a bit odd, but generally it looks like about 8 seconds between reads, so let's use a `bw` cutoff of 9.
+
+This means that if a bird were to sit in the nest box opening, we would generally
+expect to get a read every 8 seconds. So reads greater than 9 seconds apart will be considered belonging to two separate 
+visits.
+
+Let's collapse the reads into visits, and also add a measure of how long each
+visit was (`length` in seconds, how long they were recorded by the reader i.e. sat in the nest box opening, for example)
+as well as the time until the next visit (`time2next` in minutes).
+
+```{r}
+v <- visits(d, bw = 9) |>
+  group_by(animal_id, logger_id) |>
+  mutate(length = as.numeric(difftime(end, start, units = "secs")),             # Seconds
+         time2next = as.numeric(difftime(lead(start), end, units = "mins"))) |> # Minutes
+  relocate(length, time2next, .before = "animal_n")
+```
+
+Just to double check, were there any movements between feeders?
+
+Nope!
+
+```{r}
+move(v)
+```
+
+
+:::{.panel-tabset}
+
+### Summarize visits
+
+Now we'll summarize the visits by date, logger id, and bird id.
+
+Remember that `length` is in seconds, and `time2next` is in minutes.
+```{r}
+#| warning: false
+vs <- v |>
+  group_by(animal_id, logger_id, date, sex) |>
+  summarize(start_visits = min(start), end_visits = max(end), 
+            visits_n = n(), 
+            min_len = min(length), max_len = max(length), mean_len = mean(length),
+            median_len = median(length),
+            min_t2next = min(time2next, na.rm = TRUE), max_next = max(time2next, na.rm = TRUE), 
+            mean_t2next = mean(time2next, na.rm = TRUE),
+            median_t2next = median(time2next, na.rm = TRUE), .groups = "drop")
+
+summary(vs$mean_t2next)
+```
+
+Generally the next visit is within 15 minutes. 
+
+### Preview
+
+```{r}
+gt(vs)
+```
+:::
+
+
+
+## Presence
+
+Using this information, let's now summarize our data by *presence*. 
+The `presence()` function collapses visits into bouts of time in which the individual was visiting the next box regularly.
+Here we'll use a cut off of 15min to define a bout of presence.
+
+
+```{r}
+#| warning: false
+p <- presence(v, bw = 15) |>
+  mutate(time2next = as.numeric(difftime(lead(start), end, units = "mins"))) |> # Minutes
+  relocate(length, time2next, .before = "logger_n")
+```
+
+
+:::{.panel-tabset}
+
+### Summarize presence
+
+And as with visits we'll summarize the presence bouts too.
+```{r}
+ps <- p |>
+  group_by(animal_id, logger_id, date, sex) |>
+  summarize(start_presence = min(start), end_presence = max(end), 
+            bouts_n = n(), 
+            min_len = min(length), max_len = max(length), mean_len = mean(length),
+            median_len = median(length), total_length = sum(length),
+            min_t2next = min(time2next, na.rm = TRUE), max_next = max(time2next, na.rm = TRUE), 
+            mean_t2next = mean(time2next, na.rm = TRUE),
+            median_t2next = median(time2next, na.rm = TRUE), .groups = "drop")
+```
+
+### Preview
+
+```{r}
+gt(ps)
+```
+:::
+
+## Save the data
+
+Looking below at KC07, it seems very likely that the nest failed before the
+experiment (or that something was wrong, at least). So we'll omit those data 
+before saving the summary.
+
+```{r}
+v <- filter(v, logger_id != "KC07")
+vs  <- filter(vs, logger_id != "KC07")
+p  <- filter(p, logger_id != "KC07")
+ps  <- filter(ps, logger_id != "KC07")
+
+write_csv(v, "Data/Datasets/visits.csv")
+write_csv(vs, "Data/Datasets/visits_summary.csv")
+write_csv(p, "Data/Datasets/presence.csv")
+write_csv(ps, "Data/Datasets/presence_summary.csv")
+```
+
+### Data Columns
+- `animal_id` - Pit tag id for the bird
+- `logger_id` - Nest box with the logger
+- `date` - Date of the read
+- `start`/`end` - Start/End time of the visit/presence bout
+- `start_XXX`/`end_XXX` - Start/End times of the *first* and *last* visit/presence bout of the day (`visit`/`presence`).
+- `length` - Duration in **seconds** of the visit/presence bout
+- `time2next` - Time in **minutes** to the next visit/presence bout
+- `visits_n`/`bouts_n` - Daily number of visits/presence bouts
+- `animal_n` - Number of animals in the data
+- `logger_n` - Number of loggers in the data
+- `min_XXX`/`max_XXX`/`median_XXX`/`mean_XXX` - Daily Min/Max/Median/Mean of the measure in question (`len` = `length`, `t2next` = `time2next`)
+- `sex` - Sex of the animal_id
+- `egg_date` - Date from the metadata of when eggs were laid
+- `hatch_date` - Date from the metadata of when eggs were hatched (NA for nest failure)
+- `fledge_date` - Date from the metadata of when hatchlings fledged (NA for nest failure)
+- `egg`/`hatchlings`/`fledglings` - TRUE/FALSE of whether that date had eggs/hatchlings/fledglings (all are `hatchlings` or NA for failed nest)
+
+
+## Visual exploration
+
+In these figures, we're looking at the summarized data of visits (points) and
+bouts of presence (the horizontal error bars). 
+
+In the corner of each date, we note what stage the nest was in (all are either
+hatchlings, or note that the nest failed at some point). 
+
+```{r}
+#| results: asis
+#| code-fold: true
+for(i in sort(as.character(unique(p$logger_id)))) {
+  
+  cat("###", i, "\n")
+  
+  p1 <- filter(p, logger_id == i)
+  v1 <- filter(v, logger_id == i)
+  
+  s1 <- select(p1, date, eggs, hatchlings, fledglings) |>
+    distinct() |>
+    group_by(date) |>
+    summarize(label = paste0(c("Eggs", "Hatchlings", "Fledglings", "(nest failed)")[c(isTRUE(eggs), isTRUE(hatchlings), isTRUE(fledglings), is.na(fledglings))], collapse = ", "))
+  
+  l <- p1 |>
+    group_by(date) |>
+    summarize(min = unique(floor_date(start, unit = "day")), 
+              max = unique(ceiling_date(end, unit = "day")) - seconds(1))
+  
+  g <- ggplot(data = p1, 
+              aes(xmin = start, xmax = end, y = animal_id, colour = sex)) +
+    theme_bw() +
+    geom_errorbar(width = 0.25) +
+    geom_point(data = v1, aes(x = start), size = 1) +
+    geom_text(data = s1, aes(x = as_datetime(date), y = +Inf, label = label), 
+              inherit.aes = FALSE, hjust = 0.1, vjust = 1.1) +
+    facet_wrap(~date, scales = "free", ncol = 1) +
+    scale_x_datetime(date_breaks = "2 hours", date_labels = "%H:%M",
+                     limits = \(x) c(floor_date(x[1], "day"), ceiling_date(x[2], "day"))) +
+    labs(x = "Time", y = "Bird ID")
+  print(g)
+  
+  cat("\n\n")
+}
+```
+
+## To Check
+- What is the time in seconds between reads on your loggers? Is it 8s?
+- Do you want to omit all birds who's nests failed? Or only ones where it failed
+before the experiement? Do you know when this happened? Do any more data need to
+be filtered out?
+
+## Reproducibility
+
+### Packages
+
+You probably only need to cite feedr and possibly the tidyverse, but you should
+keep track of the packages used and their versions (under General Info).
+
+```{r}
+#| echo: false
+#| results: asis
+cat("#### tidyverse\n")
+citation("tidyverse") |> print(style = "text")
+
+cat("\n#### feedr\n")
+citation("feedr") |> print(style = "text")
+```
+
+### General info
+```{r}
+devtools::session_info()
+```

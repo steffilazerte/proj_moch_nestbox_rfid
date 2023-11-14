@@ -1,0 +1,2380 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Steffi">
+<meta name="dcterms.date" content="2023-11-14">
+
+<title>Load and format</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="01_load_files/libs/clipboard/clipboard.min.js"></script>
+<script src="01_load_files/libs/quarto-html/quarto.js"></script>
+<script src="01_load_files/libs/quarto-html/popper.min.js"></script>
+<script src="01_load_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="01_load_files/libs/quarto-html/anchor.min.js"></script>
+<link href="01_load_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="01_load_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="01_load_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="01_load_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="01_load_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-full">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#load-packages" id="toc-load-packages" class="nav-link active" data-scroll-target="#load-packages">Load packages</a></li>
+  <li><a href="#metadata" id="toc-metadata" class="nav-link" data-scroll-target="#metadata">Metadata</a></li>
+  <li><a href="#logger-data" id="toc-logger-data" class="nav-link" data-scroll-target="#logger-data">Logger data</a>
+  <ul class="collapse">
+  <li><a href="#exploring-the-format" id="toc-exploring-the-format" class="nav-link" data-scroll-target="#exploring-the-format">Exploring the format</a></li>
+  <li><a href="#loading-files" id="toc-loading-files" class="nav-link" data-scroll-target="#loading-files">Loading files</a></li>
+  <li><a href="#formatting" id="toc-formatting" class="nav-link" data-scroll-target="#formatting">Formatting</a></li>
+  <li><a href="#preview-1" id="toc-preview-1" class="nav-link" data-scroll-target="#preview-1">Preview</a></li>
+  </ul></li>
+  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data">Save data</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a>
+  <ul class="collapse">
+  <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#general-info" id="toc-general-info" class="nav-link" data-scroll-target="#general-info">General info</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Load and format</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Steffi </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 14, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In this script we’ll load the logger data and meta data and get them formatted for easy use in R (nice column names and exported as csv).</p>
+<section id="load-packages" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages">Load packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(feedr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="metadata" class="level2">
+<h2 class="anchored" data-anchor-id="metadata">Metadata</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Load and format</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Preview</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Data/RFID reference MOCH2023.xlsx"</span>, <span class="at">sheet =</span> <span class="dv">2</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"NA"</span>, <span class="st">"na"</span>, <span class="st">"N"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"nest_box"</span> <span class="ot">=</span> <span class="fu">contains</span>(<span class="st">"box_id"</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">"animal_id"</span> <span class="ot">=</span> <span class="st">"pit_number"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">"sex"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">"egg_date"</span> <span class="ot">=</span> <span class="st">"ed_2023"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">"hatch_date"</span> <span class="ot">=</span> <span class="st">"hd_2023"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>         <span class="st">"fledge_date"</span> <span class="ot">=</span> <span class="st">"fd_2023"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>         <span class="st">"rfid_date_start"</span> <span class="ot">=</span> <span class="st">"rfid_setup_date"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>         <span class="st">"rfid_date_end"</span> <span class="ot">=</span> <span class="st">"rfid_removal_date"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">"rfid_time_start"</span> <span class="ot">=</span> <span class="st">"rfid_setup_time"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>         <span class="st">"rfid_time_end"</span> <span class="ot">=</span> <span class="st">"rfid_removal_time"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>         <span class="st">"band_date"</span> <span class="ot">=</span> <span class="fu">contains</span>(<span class="st">"banding_date"</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>         <span class="st">"animal_id2"</span> <span class="ot">=</span> <span class="fu">contains</span>(<span class="st">"alternate"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">contains</span>(<span class="st">"date"</span>), as_date)) <span class="sc">|&gt;</span> <span class="co"># Convert to date (as opposed to date/time)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(nest_box)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Get correct dates on these times</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span>(m<span class="sc">$</span>rfid_time_start) <span class="ot">&lt;-</span> m<span class="sc">$</span>rfid_date_start</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span>(m<span class="sc">$</span>rfid_time_end)<span class="ot">&lt;-</span> m<span class="sc">$</span>rfid_date_end</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> m <span class="sc">|&gt;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rfid_time_start =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(rfid_time_start), <span class="fu">as_datetime</span>(rfid_date_start), rfid_time_start),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">rfid_time_end =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(rfid_time_end), <span class="fu">as_datetime</span>(rfid_date_end), rfid_time_end)) <span class="sc">|&gt;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>rfid_date_start, <span class="sc">-</span>rfid_date_end)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(m)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div id="elicqcewvq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#elicqcewvq table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#elicqcewvq thead, #elicqcewvq tbody, #elicqcewvq tfoot, #elicqcewvq tr, #elicqcewvq td, #elicqcewvq th {
+  border-style: none;
+}
+
+#elicqcewvq p {
+  margin: 0;
+  padding: 0;
+}
+
+#elicqcewvq .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#elicqcewvq .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#elicqcewvq .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#elicqcewvq .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#elicqcewvq .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#elicqcewvq .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#elicqcewvq .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#elicqcewvq .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#elicqcewvq .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#elicqcewvq .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#elicqcewvq .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#elicqcewvq .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#elicqcewvq .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#elicqcewvq .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#elicqcewvq .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#elicqcewvq .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#elicqcewvq .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#elicqcewvq .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#elicqcewvq .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#elicqcewvq .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#elicqcewvq .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#elicqcewvq .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#elicqcewvq .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#elicqcewvq .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#elicqcewvq .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#elicqcewvq .gt_left {
+  text-align: left;
+}
+
+#elicqcewvq .gt_center {
+  text-align: center;
+}
+
+#elicqcewvq .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#elicqcewvq .gt_font_normal {
+  font-weight: normal;
+}
+
+#elicqcewvq .gt_font_bold {
+  font-weight: bold;
+}
+
+#elicqcewvq .gt_font_italic {
+  font-style: italic;
+}
+
+#elicqcewvq .gt_super {
+  font-size: 65%;
+}
+
+#elicqcewvq .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#elicqcewvq .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#elicqcewvq .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#elicqcewvq .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#elicqcewvq .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#elicqcewvq .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#elicqcewvq .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="nest_box">nest_box</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="animal_id">animal_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="sex">sex</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="egg_date">egg_date</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="hatch_date">hatch_date</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="fledge_date">fledge_date</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="rfid_time_start">rfid_time_start</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="rfid_time_end">rfid_time_end</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="band_date">band_date</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="animal_id2">animal_id2</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="nest_box" class="gt_row gt_left">KC01</td>
+<td headers="animal_id" class="gt_row gt_left">011016C73C</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-02</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-20</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-21 10:00:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-31 09:54:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC01</td>
+<td headers="animal_id" class="gt_row gt_left">01103F6182</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-02</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-20</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-21 10:00:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-31 09:54:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC04</td>
+<td headers="animal_id" class="gt_row gt_left">01103F7F4C</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-08</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-25</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 11:27:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-30 09:10:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-26</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC07</td>
+<td headers="animal_id" class="gt_row gt_left">01103F9024</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-07</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 12:47:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-30 08:40:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-26</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC07</td>
+<td headers="animal_id" class="gt_row gt_left">01103F8DFA</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-07</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 12:47:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-30 08:40:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-26</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC11</td>
+<td headers="animal_id" class="gt_row gt_left">01103F7FF7</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-07</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-26</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-15</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-28 12:35:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-06 10:00:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-27</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC11</td>
+<td headers="animal_id" class="gt_row gt_left">01103F8F21</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-07</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-26</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-15</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-28 12:35:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-06 10:00:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC15</td>
+<td headers="animal_id" class="gt_row gt_left">011016D09D</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-06-03 08:39:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-03 08:39:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-31</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC15</td>
+<td headers="animal_id" class="gt_row gt_left">0700EE2AF9</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-06-03 08:39:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-03 08:39:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-31</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC21</td>
+<td headers="animal_id" class="gt_row gt_left">01103F623E</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-06</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-25</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-26 10:47:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-30 11:06:00</td>
+<td headers="band_date" class="gt_row gt_right">2021-06-02</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC28</td>
+<td headers="animal_id" class="gt_row gt_left">01103F8F45</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-09</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-17</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-08 09:04:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-30</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC28</td>
+<td headers="animal_id" class="gt_row gt_left">011016CA32</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-09</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-17</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-08 09:04:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-30</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC41</td>
+<td headers="animal_id" class="gt_row gt_left">01103F65EE</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-13</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-30</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-18</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-06-01</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-10</td>
+<td headers="band_date" class="gt_row gt_right">2023-06-01</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC41</td>
+<td headers="animal_id" class="gt_row gt_left">01103F6C19</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-13</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-30</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-18</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-06-01</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-10</td>
+<td headers="band_date" class="gt_row gt_right">2023-06-01</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC49</td>
+<td headers="animal_id" class="gt_row gt_left">01103F72AE</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-09</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-27</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-15</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-29</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-07 09:26:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC54</td>
+<td headers="animal_id" class="gt_row gt_left">01103F45EE</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-08</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-25</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-15</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 10:35:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-05 09:49:00</td>
+<td headers="band_date" class="gt_row gt_right">2021-06-06</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC54</td>
+<td headers="animal_id" class="gt_row gt_left">011016V674</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-08</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-25</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-15</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 10:35:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-05 09:49:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-06-04</td>
+<td headers="animal_id2" class="gt_row gt_left">011016B674</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC56</td>
+<td headers="animal_id" class="gt_row gt_left">011016F38E</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-11</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-22 10:00:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-01 10:55:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-22</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC56</td>
+<td headers="animal_id" class="gt_row gt_left">011016B3D3</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-11</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-22 10:00:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-01 10:55:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-22</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC57</td>
+<td headers="animal_id" class="gt_row gt_left">01103F4F6D</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-02</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-20</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-09</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-21 11:00:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 07:37:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-27</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC57</td>
+<td headers="animal_id" class="gt_row gt_left">01103F89AB</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-02</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-20</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-09</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-21 11:00:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 07:37:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-27</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC58</td>
+<td headers="animal_id" class="gt_row gt_left">01103F8B3E</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-08</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-26</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-16</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 14:30:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-06 09:00:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-27</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC60</td>
+<td headers="animal_id" class="gt_row gt_left">011016CDB3</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-12</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-25 11:04:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 07:21:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-06-10</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC60</td>
+<td headers="animal_id" class="gt_row gt_left">011061C8A7</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-12</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-25 11:04:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 07:21:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-06-06</td>
+<td headers="animal_id2" class="gt_row gt_left">011016C8A7</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC61</td>
+<td headers="animal_id" class="gt_row gt_left">011016B7AD</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-25</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-14</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-26 14:53:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-05 10:17:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-06-07</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC61</td>
+<td headers="animal_id" class="gt_row gt_left">011016D887</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-25</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-14</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-26 14:53:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-05 10:17:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-06-08</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC62</td>
+<td headers="animal_id" class="gt_row gt_left">011016D4EC</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30 11:40:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-02 10:12:00</td>
+<td headers="band_date" class="gt_row gt_right">2021-06-03</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC62</td>
+<td headers="animal_id" class="gt_row gt_left">011016BFF2</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30 11:40:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-02 10:12:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-30</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC64</td>
+<td headers="animal_id" class="gt_row gt_left">01103F3A79</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-19</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-08 09:47:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-30</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC64</td>
+<td headers="animal_id" class="gt_row gt_left">01103F7CDE</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-19</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-08 09:47:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-30</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC66</td>
+<td headers="animal_id" class="gt_row gt_left">01103F7964</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-11</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-24 09:15:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-01 11:59:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-22</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC66</td>
+<td headers="animal_id" class="gt_row gt_left">01103F6479</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-11</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-24 09:15:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-01 11:59:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-26</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC67</td>
+<td headers="animal_id" class="gt_row gt_left">011016DEB5</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-12</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-18</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-31</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-09 09:56:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-31</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">KC67</td>
+<td headers="animal_id" class="gt_row gt_left">01103F3B4B</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-12</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-18</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-31</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-09 09:56:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-06-01</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">TEST1</td>
+<td headers="animal_id" class="gt_row gt_left">01103F8FC7</td>
+<td headers="sex" class="gt_row gt_left">NA</td>
+<td headers="egg_date" class="gt_row gt_right">NA</td>
+<td headers="hatch_date" class="gt_row gt_right">NA</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_end" class="gt_row gt_right">NA</td>
+<td headers="band_date" class="gt_row gt_right">NA</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">TEST2</td>
+<td headers="animal_id" class="gt_row gt_left">0700EE430E</td>
+<td headers="sex" class="gt_row gt_left">NA</td>
+<td headers="egg_date" class="gt_row gt_right">NA</td>
+<td headers="hatch_date" class="gt_row gt_right">NA</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_end" class="gt_row gt_right">NA</td>
+<td headers="band_date" class="gt_row gt_right">NA</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">TEST3</td>
+<td headers="animal_id" class="gt_row gt_left">0700ED9EC0</td>
+<td headers="sex" class="gt_row gt_left">NA</td>
+<td headers="egg_date" class="gt_row gt_right">NA</td>
+<td headers="hatch_date" class="gt_row gt_right">NA</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_end" class="gt_row gt_right">NA</td>
+<td headers="band_date" class="gt_row gt_right">NA</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">TEST4</td>
+<td headers="animal_id" class="gt_row gt_left">01103F3B07</td>
+<td headers="sex" class="gt_row gt_left">NA</td>
+<td headers="egg_date" class="gt_row gt_right">NA</td>
+<td headers="hatch_date" class="gt_row gt_right">NA</td>
+<td headers="fledge_date" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_start" class="gt_row gt_right">NA</td>
+<td headers="rfid_time_end" class="gt_row gt_right">NA</td>
+<td headers="band_date" class="gt_row gt_right">NA</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR06</td>
+<td headers="animal_id" class="gt_row gt_left">01103F8EDB</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-30</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-18</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-08</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-19 11:15:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 13:30:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR06</td>
+<td headers="animal_id" class="gt_row gt_left">011016C66A</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-30</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-18</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-08</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-19 11:15:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 13:30:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR35</td>
+<td headers="animal_id" class="gt_row gt_left">01103F8392</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-29</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-19</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-08</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-20 09:25:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-30 13:35:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-24</td>
+<td headers="animal_id2" class="gt_row gt_left">0300019F63</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR35</td>
+<td headers="animal_id" class="gt_row gt_left">011016D93A</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-29</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-19</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-08</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-20 09:25:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-30 13:35:00</td>
+<td headers="band_date" class="gt_row gt_right">2021-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR37</td>
+<td headers="animal_id" class="gt_row gt_left">0700EDE42E</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-18</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-29 10:47:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-08 12:03:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR37</td>
+<td headers="animal_id" class="gt_row gt_left">01103F60C9</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-10</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-18</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-29 10:47:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-08 12:03:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR39</td>
+<td headers="animal_id" class="gt_row gt_left">01103F5DE2</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-27</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-15</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30 12:45:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-07 10:53:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR39</td>
+<td headers="animal_id" class="gt_row gt_left">011016B84F</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-27</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-15</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-30 12:45:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-07 10:53:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-28</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR45</td>
+<td headers="animal_id" class="gt_row gt_left">011016BE88</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-29</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-18</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-09</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-20 13:36:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 09:40:00</td>
+<td headers="band_date" class="gt_row gt_right">2022-05-23</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR45</td>
+<td headers="animal_id" class="gt_row gt_left">0700EDB80A</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-29</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-18</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-09</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-20 13:36:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-29 09:40:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR47</td>
+<td headers="animal_id" class="gt_row gt_left">01103FC6E7</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-01</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-10</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-22 12:55:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-01</td>
+<td headers="band_date" class="gt_row gt_right">2021-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR47</td>
+<td headers="animal_id" class="gt_row gt_left">01103F690D</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-01</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-10</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-22 12:55:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-01</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-29</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR55</td>
+<td headers="animal_id" class="gt_row gt_left">011016D9C8</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-23</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-12</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-24 12:15:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-03 11:01:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR55</td>
+<td headers="animal_id" class="gt_row gt_left">0700EDFE67</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-23</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-12</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-24 12:15:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-03 11:01:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR56</td>
+<td headers="animal_id" class="gt_row gt_left">011016A4AE</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-11</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 12:27:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-06 12:00:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-27</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR56</td>
+<td headers="animal_id" class="gt_row gt_left">01103F3A6A</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-04</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-21</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-11</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-27 12:27:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-06 12:00:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-27</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR57</td>
+<td headers="animal_id" class="gt_row gt_left">01103F7C0E</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-22</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-10</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-24 16:40:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-02 13:02:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-06-06</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR57</td>
+<td headers="animal_id" class="gt_row gt_left">011016C8A2</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-05-05</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-22</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-10</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-24 16:40:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-06-02 13:02:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-24</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR59</td>
+<td headers="animal_id" class="gt_row gt_left">01103F77E9</td>
+<td headers="sex" class="gt_row gt_left">F</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-27</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-16</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-04</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-18 09:10:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-27 10:56:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-18</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+    <tr><td headers="nest_box" class="gt_row gt_left">UR59</td>
+<td headers="animal_id" class="gt_row gt_left">011016CA17</td>
+<td headers="sex" class="gt_row gt_left">M</td>
+<td headers="egg_date" class="gt_row gt_right">2023-04-27</td>
+<td headers="hatch_date" class="gt_row gt_right">2023-05-16</td>
+<td headers="fledge_date" class="gt_row gt_right">2023-06-04</td>
+<td headers="rfid_time_start" class="gt_row gt_right">2023-05-18 09:10:00</td>
+<td headers="rfid_time_end" class="gt_row gt_right">2023-05-27 10:56:00</td>
+<td headers="band_date" class="gt_row gt_right">2023-05-18</td>
+<td headers="animal_id2" class="gt_row gt_left">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="logger-data" class="level2">
+<h2 class="anchored" data-anchor-id="logger-data">Logger data</h2>
+<section id="exploring-the-format" class="level3">
+<h3 class="anchored" data-anchor-id="exploring-the-format">Exploring the format</h3>
+<p>First let’s peak at the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_lines</span>(<span class="st">"Data/MOCH 2023 RFID/KC01 May 2023 RFID/ID20DATA.TXT"</span>, <span class="at">n_max =</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "01103F8FC7, 1, 05/21/2023 09:48:21" "011016C73C, 1, 05/21/2023 10:08:03"
+ [3] "011016C73C, 1, 05/21/2023 10:15:21" "011016C73C, 1, 05/21/2023 10:15:29"
+ [5] "011016C73C, 1, 05/21/2023 10:26:15" "011016C73C, 1, 05/21/2023 10:31:22"
+ [7] "011016C73C, 1, 05/21/2023 10:34:10" "011016C73C, 1, 05/21/2023 10:39:36"
+ [9] "011016C73C, 1, 05/21/2023 10:41:45" "011016C73C, 1, 05/21/2023 10:42:06"</code></pre>
+</div>
+</div>
+<p>This isn’t the format expected by feedr functions <code>load_raw()</code> or <code>load_raw_all()</code> (see their documentation with <code>?load_raw</code>).</p>
+<p>So we can’t use the <code>load_raw_all()</code> function because the logger format is different. Instead we’ll load by hand and then use the formatter function (<code>load_format()</code>).</p>
+</section>
+<section id="loading-files" class="level3">
+<h3 class="anchored" data-anchor-id="loading-files">Loading files</h3>
+<p>Get a list of all the files we’re interested in (only those with <code>DATA</code> in the name).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>l <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"Data/MOCH 2023 RFID/"</span>, <span class="at">pattern =</span> <span class="st">"DATA"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>l</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT" 
+ [2] "Data/MOCH 2023 RFID//KC04 May 2023 RFID/ID16DATA.TXT" 
+ [3] "Data/MOCH 2023 RFID//KC07 May 2023 RFID/ID18DATA.TXT" 
+ [4] "Data/MOCH 2023 RFID//KC11 June 2023 RFID/ID04DATA.TXT"
+ [5] "Data/MOCH 2023 RFID//KC15 June 2023 RFID/ID12DATA.TXT"
+ [6] "Data/MOCH 2023 RFID//KC21 May 2023 RFID/ID08DATA.TXT" 
+ [7] "Data/MOCH 2023 RFID//KC28 June 2023 RFID/ID14DATA.TXT"
+ [8] "Data/MOCH 2023 RFID//KC41 June 2023 RFID/ID20DATA.TXT"
+ [9] "Data/MOCH 2023 RFID//KC49 June 2023 RFID/ID10DATA.TXT"
+[10] "Data/MOCH 2023 RFID//KC54 June 2023 RFID/ID09DATA.TXT"
+[11] "Data/MOCH 2023 RFID//KC56 June 2023 RFID/ID11DATA.TXT"
+[12] "Data/MOCH 2023 RFID//KC57 May 2023 RFID/ID14DATA.TXT" 
+[13] "Data/MOCH 2023 RFID//KC58 June 2023 RFID/ID15DATA.TXT"
+[14] "Data/MOCH 2023 RFID//KC60 May 2023 RFID/ID10DATA.TXT" 
+[15] "Data/MOCH 2023 RFID//KC61 June 2023 RFID/ID05DATA.TXT"
+[16] "Data/MOCH 2023 RFID//KC62 June 2023 RFID/ID08DATA.TXT"
+[17] "Data/MOCH 2023 RFID//KC64 June 2023 RFID/ID02DATA.TXT"
+[18] "Data/MOCH 2023 RFID//KC67 June 2023 RFID/ID16DATA.TXT"
+[19] "Data/MOCH 2023 RFID//UR06 May 2023 RFID/ID02DATA.TXT" 
+[20] "Data/MOCH 2023 RFID//UR35 May 2023 RFID/ID12DATA.TXT" 
+[21] "Data/MOCH 2023 RFID//UR37 June 2023 RFID/ID06DATA.TXT"
+[22] "Data/MOCH 2023 RFID//UR39 June 2023 RFID/ID18DATA.TXT"
+[23] "Data/MOCH 2023 RFID//UR45 May 2023 RFID/ID06DATA.TXT" 
+[24] "Data/MOCH 2023 RFID//UR47 June 2023 RFID/ID03DATA.TXT"
+[25] "Data/MOCH 2023 RFID//UR55 June 2023 RFID/ID19DATA.TXT"
+[26] "Data/MOCH 2023 RFID//UR56 June 2023 RFID/ID13DATA.TXT"
+[27] "Data/MOCH 2023 RFID//UR57 June 2023 RFID/ID17DATA.TXT"
+[28] "Data/MOCH 2023 RFID//UR59 May 2023 RFID/ID04DATA.TXT" </code></pre>
+</div>
+</div>
+<p>Now let’s load them, here we’ll omit the middle column as it just contains <code>1</code>s.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(l, </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"animal_id"</span>, <span class="st">"X"</span>, <span class="st">"time_orig"</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">col_types =</span> <span class="fu">c</span>(<span class="st">"c_c"</span>), <span class="co"># c = Character, _ = Skip (omit)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">id =</span> <span class="st">"file"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 35,349 × 3
+   file                                                 animal_id  time_orig          
+   &lt;chr&gt;                                                &lt;chr&gt;      &lt;chr&gt;              
+ 1 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 01103F8FC7 05/21/2023 09:48:21
+ 2 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:08:03
+ 3 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:15:21
+ 4 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:15:29
+ 5 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:26:15
+ 6 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:31:22
+ 7 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:34:10
+ 8 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:39:36
+ 9 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:41:45
+10 Data/MOCH 2023 RFID//KC01 May 2023 RFID/ID20DATA.TXT 011016C73C 05/21/2023 10:42:06
+# ℹ 35,339 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="formatting" class="level3">
+<h3 class="anchored" data-anchor-id="formatting">Formatting</h3>
+<p>Now let’s format it for use by feedr functions.</p>
+<ul>
+<li>First we need to get the logger id from the file name</li>
+<li>Then we need to convert the time to a proper date/time column.</li>
+<li>Finally we can use the <code>load_format()</code> function to make sure everything is ready to go.</li>
+</ul>
+<section id="get-the-logger-id" class="level4">
+<h4 class="anchored" data-anchor-id="get-the-logger-id">Get the logger id</h4>
+<p>To get the logger id we’ll use a <a href="https://stringr.tidyverse.org/articles/regular-expressions.html">regular expression</a>. These can be a bit tricky, but are a really cool way of matching text patterns. Here we match either “KC” or “UR” followed by 1 or more digits (numbers).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">mutate</span>(d, <span class="at">logger_id =</span> <span class="fu">str_extract</span>(file, <span class="st">"(KC|UR)</span><span class="sc">\\</span><span class="st">d+"</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(d<span class="sc">$</span>logger_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "KC01" "KC04" "KC07" "KC11" "KC15" "KC21" "KC28" "KC41" "KC49" "KC54" "KC56" "KC57" "KC58"
+[14] "KC60" "KC61" "KC62" "KC64" "KC67" "UR06" "UR35" "UR37" "UR39" "UR45" "UR47" "UR55" "UR56"
+[27] "UR57" "UR59"</code></pre>
+</div>
+</div>
+<p>Looks good!</p>
+</section>
+<section id="get-the-datetime" class="level4">
+<h4 class="anchored" data-anchor-id="get-the-datetime">Get the date/time</h4>
+<p>We tell R the format of the time column by specifying the order of the date pieces. Here the date is <strong>M</strong>onth/<strong>D</strong>ay/<strong>Y</strong>ear <strong>H</strong>our:<strong>M</strong>in:<strong>S</strong>ecs so we use the <code>mdy_hms()</code> function.</p>
+<p>There are some problems with the times in the files, so we’ll put the good ones in a new column so we can see what’s up. Because <code>load_format()</code> looks for a column called “time”, that’s what we’ll create.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">mutate</span>(d, <span class="at">time =</span> <span class="fu">mdy_hms</span>(time_orig))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `time = mdy_hms(time_orig)`.
+Caused by warning:
+!  661 failed to parse.</code></pre>
+</div>
+</div>
+<p>Now let’s see where the trouble is.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d, <span class="fu">is.na</span>(time)) <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 661 × 4
+   animal_id  time_orig           logger_id time  
+   &lt;chr&gt;      &lt;chr&gt;               &lt;chr&gt;     &lt;dttm&gt;
+ 1 01103F8FC7 00/03/2070 23:55:20 UR56      NA    
+ 2 01103F8FC7 00/04/2070 00:00:17 UR56      NA    
+ 3 011016A4AE 00/04/2070 00:03:18 UR56      NA    
+ 4 011016A4AE 00/04/2070 00:04:36 UR56      NA    
+ 5 011016A4AE 00/04/2070 00:04:44 UR56      NA    
+ 6 011016A4AE 00/04/2070 00:07:09 UR56      NA    
+ 7 01103F3A6A 00/04/2070 00:12:17 UR56      NA    
+ 8 01103F3A6A 00/04/2070 00:12:25 UR56      NA    
+ 9 01103F3A6A 00/04/2070 00:12:33 UR56      NA    
+10 01103F3A6A 00/04/2070 00:12:49 UR56      NA    
+# ℹ 651 more rows</code></pre>
+</div>
+</div>
+<p>Hmm, those date/times don’t look right at all. At least it looks like it’s all from the same file UR56:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d, <span class="fu">is.na</span>(time)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(file) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  file                                                 
+  &lt;chr&gt;                                                
+1 Data/MOCH 2023 RFID//UR56 June 2023 RFID/ID13DATA.TXT</code></pre>
+</div>
+</div>
+<p>Perhaps we can see if this can be rescued later, for now we’ll ignore them.</p>
+</section>
+<section id="final-formatting-with-load_format" class="level4">
+<h4 class="anchored" data-anchor-id="final-formatting-with-load_format">Final formatting with <code>load_format()</code></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">load_format</span>(d, <span class="at">tz =</span> <span class="st">"America/Vancouver"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="st">"file"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="preview-1" class="level3">
+<h3 class="anchored" data-anchor-id="preview-1">Preview</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slice</span>(d, <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div id="zimhrwolmt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zimhrwolmt table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#zimhrwolmt thead, #zimhrwolmt tbody, #zimhrwolmt tfoot, #zimhrwolmt tr, #zimhrwolmt td, #zimhrwolmt th {
+  border-style: none;
+}
+
+#zimhrwolmt p {
+  margin: 0;
+  padding: 0;
+}
+
+#zimhrwolmt .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#zimhrwolmt .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#zimhrwolmt .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#zimhrwolmt .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#zimhrwolmt .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#zimhrwolmt .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#zimhrwolmt .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#zimhrwolmt .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#zimhrwolmt .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#zimhrwolmt .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#zimhrwolmt .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zimhrwolmt .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#zimhrwolmt .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#zimhrwolmt .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#zimhrwolmt .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zimhrwolmt .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#zimhrwolmt .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#zimhrwolmt .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#zimhrwolmt .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zimhrwolmt .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#zimhrwolmt .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zimhrwolmt .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#zimhrwolmt .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zimhrwolmt .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zimhrwolmt .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zimhrwolmt .gt_left {
+  text-align: left;
+}
+
+#zimhrwolmt .gt_center {
+  text-align: center;
+}
+
+#zimhrwolmt .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#zimhrwolmt .gt_font_normal {
+  font-weight: normal;
+}
+
+#zimhrwolmt .gt_font_bold {
+  font-weight: bold;
+}
+
+#zimhrwolmt .gt_font_italic {
+  font-style: italic;
+}
+
+#zimhrwolmt .gt_super {
+  font-size: 65%;
+}
+
+#zimhrwolmt .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#zimhrwolmt .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#zimhrwolmt .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#zimhrwolmt .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#zimhrwolmt .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#zimhrwolmt .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#zimhrwolmt .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="animal_id">animal_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="date">date</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="time">time</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="logger_id">logger_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="time_orig">time_orig</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F8FC7</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 09:48:21</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 09:48:21</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:08:03</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:08:03</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:15:21</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:15:21</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:15:29</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:15:29</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:26:15</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:26:15</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:31:22</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:31:22</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:34:10</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:34:10</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:39:36</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:39:36</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:41:45</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:41:45</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:42:06</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:42:06</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:42:58</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:42:58</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:45:16</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:45:16</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:46:09</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:46:09</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:46:17</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:46:17</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:46:25</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:46:25</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:46:35</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:46:35</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:46:37</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:46:37</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:48:12</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:48:12</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 10:53:49</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 10:53:49</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:02:24</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:02:24</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:09:22</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:09:22</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:11:00</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:11:00</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:11:08</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:11:08</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:11:22</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:11:22</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:11:30</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:11:30</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">011016C73C</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:14:14</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:14:14</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:14:23</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:14:23</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:15:05</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:15:05</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:18:45</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:18:45</td></tr>
+    <tr><td headers="animal_id" class="gt_row gt_center">01103F6182</td>
+<td headers="date" class="gt_row gt_right">2023-05-21</td>
+<td headers="time" class="gt_row gt_right">2023-05-21 11:19:10</td>
+<td headers="logger_id" class="gt_row gt_center">KC01</td>
+<td headers="time_orig" class="gt_row gt_right">05/21/2023 11:19:10</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="save-data" class="level2">
+<h2 class="anchored" data-anchor-id="save-data">Save data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(d, <span class="st">"Data/Datasets/logger_raw.csv"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(m, <span class="st">"Data/Datasets/meta_raw.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="reproducibility" class="level2">
+<h2 class="anchored" data-anchor-id="reproducibility">Reproducibility</h2>
+<section id="packages" class="level3">
+<h3 class="anchored" data-anchor-id="packages">Packages</h3>
+<p>You probably only need to cite feedr and possibly the tidyverse, but you should keep track of the packages used and their versions (under General Info).</p>
+<section id="tidyverse" class="level4">
+<h4 class="anchored" data-anchor-id="tidyverse">tidyverse</h4>
+<p>Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” <em>Journal of Open Source Software</em>, <em>4</em>(43), 1686. doi:10.21105/joss.01686 <a href="https://doi.org/10.21105/joss.01686" class="uri">https://doi.org/10.21105/joss.01686</a>.</p>
+</section>
+<section id="feedr" class="level4">
+<h4 class="anchored" data-anchor-id="feedr">feedr</h4>
+<p>LaZerte SE, Reudink MW, Otter KA, Kusack J, Bailey JM, Woolverton A, Paetkau M, de Jong A, Hill DJ (2017). “feedr and animalnexus.ca: A paired R package and user-friendly Web application for transforming and visualizing animal movement data from static stations.” <em>Ecology and Evolution</em>, <em>7</em>(19), 7884-7896. doi:10.1002/ece3.3240 <a href="https://doi.org/10.1002/ece3.3240" class="uri">https://doi.org/10.1002/ece3.3240</a>.</p>
+</section>
+</section>
+<section id="general-info" class="level3">
+<h3 class="anchored" data-anchor-id="general-info">General info</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">session_info</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.3.2 (2023-10-31)
+ os       Ubuntu 22.04.3 LTS
+ system   x86_64, linux-gnu
+ ui       X11
+ language en_CA:en
+ collate  en_CA.UTF-8
+ ctype    en_CA.UTF-8
+ tz       America/Winnipeg
+ date     2023-11-14
+ pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────
+ package     * version date (UTC) lib source
+ bit           4.0.5   2022-11-15 [1] CRAN (R 4.3.0)
+ bit64         4.0.5   2020-08-30 [1] CRAN (R 4.3.0)
+ cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.0)
+ callr         3.7.3   2022-11-02 [1] CRAN (R 4.3.0)
+ cellranger    1.1.0   2016-07-27 [1] CRAN (R 4.3.0)
+ cli           3.6.1   2023-03-23 [1] CRAN (R 4.3.0)
+ colorspace    2.1-0   2023-01-23 [1] CRAN (R 4.3.0)
+ crayon        1.5.2   2022-09-29 [1] CRAN (R 4.3.0)
+ crosstalk     1.2.0   2021-11-04 [1] CRAN (R 4.3.0)
+ devtools      2.4.5   2022-10-11 [1] CRAN (R 4.3.0)
+ digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+ dplyr       * 1.1.3   2023-09-03 [1] CRAN (R 4.3.1)
+ ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.3.0)
+ evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.1)
+ fansi         1.0.5   2023-10-08 [1] CRAN (R 4.3.1)
+ fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.0)
+ feedr       * 0.11.0  2023-11-14 [1] local
+ forcats     * 1.0.0   2023-01-29 [1] CRAN (R 4.3.0)
+ fs            1.6.3   2023-07-20 [1] CRAN (R 4.3.1)
+ generics      0.1.3   2022-07-05 [1] CRAN (R 4.3.0)
+ ggplot2     * 3.4.4   2023-10-12 [1] CRAN (R 4.3.1)
+ glue          1.6.2   2022-02-24 [1] CRAN (R 4.3.0)
+ gt          * 0.10.0  2023-10-07 [1] CRAN (R 4.3.1)
+ gtable        0.3.4   2023-08-21 [1] CRAN (R 4.3.1)
+ hms           1.1.3   2023-03-21 [1] CRAN (R 4.3.0)
+ htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.1)
+ htmlwidgets   1.6.2   2023-03-17 [1] CRAN (R 4.3.0)
+ httpuv        1.6.12  2023-10-23 [1] CRAN (R 4.3.1)
+ janitor     * 2.2.0   2023-02-02 [1] CRAN (R 4.3.0)
+ jsonlite      1.8.7   2023-06-29 [1] CRAN (R 4.3.1)
+ knitr         1.45    2023-10-30 [1] CRAN (R 4.3.1)
+ later         1.3.1   2023-05-02 [1] CRAN (R 4.3.1)
+ leaflet       2.2.0   2023-08-31 [1] CRAN (R 4.3.1)
+ lifecycle     1.0.3   2022-10-07 [1] CRAN (R 4.3.0)
+ lubridate   * 1.9.3   2023-09-27 [1] CRAN (R 4.3.1)
+ magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.3.0)
+ memoise       2.0.1   2021-11-26 [1] CRAN (R 4.3.0)
+ mime          0.12    2021-09-28 [1] CRAN (R 4.3.0)
+ miniUI        0.1.1.1 2018-05-18 [1] CRAN (R 4.3.0)
+ munsell       0.5.0   2018-06-12 [1] CRAN (R 4.3.0)
+ pillar        1.9.0   2023-03-22 [1] CRAN (R 4.3.0)
+ pkgbuild      1.4.2   2023-06-26 [1] CRAN (R 4.3.1)
+ pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.3.0)
+ pkgload       1.3.3   2023-09-22 [1] CRAN (R 4.3.1)
+ prettyunits   1.2.0   2023-09-24 [1] CRAN (R 4.3.1)
+ processx      3.8.2   2023-06-30 [1] CRAN (R 4.3.1)
+ profvis       0.3.8   2023-05-02 [1] CRAN (R 4.3.1)
+ promises      1.2.1   2023-08-10 [1] CRAN (R 4.3.1)
+ ps            1.7.5   2023-04-18 [1] CRAN (R 4.3.0)
+ purrr       * 1.0.2   2023-08-10 [1] CRAN (R 4.3.1)
+ R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.0)
+ Rcpp          1.0.11  2023-07-06 [1] CRAN (R 4.3.1)
+ readr       * 2.1.4   2023-02-10 [1] CRAN (R 4.3.0)
+ readxl      * 1.4.3   2023-07-06 [1] CRAN (R 4.3.1)
+ remotes       2.4.2.1 2023-07-18 [1] CRAN (R 4.3.1)
+ rlang         1.1.2   2023-11-04 [1] CRAN (R 4.3.1)
+ rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+ rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+ sass          0.4.7   2023-07-15 [1] CRAN (R 4.3.1)
+ scales        1.2.1   2022-08-20 [1] CRAN (R 4.3.0)
+ sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.0)
+ shiny         1.7.5.1 2023-10-14 [1] CRAN (R 4.3.1)
+ snakecase     0.11.1  2023-08-27 [1] CRAN (R 4.3.1)
+ stringi       1.7.12  2023-01-11 [1] CRAN (R 4.3.0)
+ stringr     * 1.5.0   2022-12-02 [1] CRAN (R 4.3.0)
+ tibble      * 3.2.1   2023-03-20 [1] CRAN (R 4.3.0)
+ tidyr       * 1.3.0   2023-01-24 [1] CRAN (R 4.3.0)
+ tidyselect    1.2.0   2022-10-10 [1] CRAN (R 4.3.0)
+ tidyverse   * 2.0.0   2023-02-22 [1] CRAN (R 4.3.0)
+ timechange    0.2.0   2023-01-11 [1] CRAN (R 4.3.0)
+ tzdb          0.4.0   2023-05-12 [1] CRAN (R 4.3.1)
+ urlchecker    1.0.1   2021-11-30 [1] CRAN (R 4.3.0)
+ usethis       2.2.2   2023-07-06 [1] CRAN (R 4.3.1)
+ utf8          1.2.4   2023-10-22 [1] CRAN (R 4.3.1)
+ vctrs         0.6.4   2023-10-12 [1] CRAN (R 4.3.1)
+ vroom         1.6.4   2023-10-02 [1] CRAN (R 4.3.1)
+ withr         2.5.2   2023-10-30 [1] CRAN (R 4.3.1)
+ xfun          0.41    2023-11-01 [1] CRAN (R 4.3.1)
+ xml2          1.3.5   2023-07-06 [1] CRAN (R 4.3.1)
+ xtable        1.8-4   2019-04-21 [1] CRAN (R 4.3.0)
+ yaml          2.3.7   2023-01-23 [1] CRAN (R 4.3.0)
+
+ [1] /home/steffi/R/x86_64-pc-linux-gnu-library/4.3
+ [2] /usr/local/lib/R/site-library
+ [3] /usr/lib/R/site-library
+ [4] /usr/lib/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

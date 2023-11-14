@@ -1,0 +1,16 @@
+project:
+  title: "MOCH Nestbox RFIDs"
+  execute-dir: project
+  output-dir: Results
+
+format: 
+  html:
+    page-layout: full
+date: today
+author: Steffi
+knitr:
+  opts_chunk: 
+    R.options:
+      width: 100
+toc: true
+toc-depth: 3

@@ -1,0 +1,179 @@
+---
+title: "Load and format"
+---
+
+In this script we'll load the logger data and meta data and get them formatted 
+for easy use in R (nice column names and exported as csv).
+
+## Load packages
+
+```{r}
+#| message: false
+library(feedr)
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(gt)
+```
+
+
+## Metadata
+
+:::{.panel-tabset}
+
+### Load and format
+```{r}
+m <- read_excel("Data/RFID reference MOCH2023.xlsx", sheet = 2, na = c("NA", "na", "N")) |>
+  clean_names() |>
+  select("nest_box" = contains("box_id"),
+         "animal_id" = "pit_number",
+         "sex",
+         "egg_date" = "ed_2023",
+         "hatch_date" = "hd_2023",
+         "fledge_date" = "fd_2023",
+         "rfid_date_start" = "rfid_setup_date",
+         "rfid_date_end" = "rfid_removal_date",
+         "rfid_time_start" = "rfid_setup_time",
+         "rfid_time_end" = "rfid_removal_time",
+         "band_date" = contains("banding_date"),
+         "animal_id2" = contains("alternate")) |>
+  mutate(across(contains("date"), as_date)) |> # Convert to date (as opposed to date/time)
+  arrange(nest_box)
+
+# Get correct dates on these times
+date(m$rfid_time_start) <- m$rfid_date_start
+date(m$rfid_time_end)<- m$rfid_date_end
+
+m <- m |>
+  mutate(rfid_time_start = if_else(is.na(rfid_time_start), as_datetime(rfid_date_start), rfid_time_start),
+         rfid_time_end = if_else(is.na(rfid_time_end), as_datetime(rfid_date_end), rfid_time_end)) |>
+  select(-rfid_date_start, -rfid_date_end)
+```
+
+### Preview
+```{r}
+gt(m)
+```
+:::
+
+
+## Logger data
+
+### Exploring the format
+
+First let's peak at the data.
+
+```{r}
+read_lines("Data/MOCH 2023 RFID/KC01 May 2023 RFID/ID20DATA.TXT", n_max = 10)
+```
+
+This isn't the format expected by feedr functions `load_raw()` or `load_raw_all()`
+(see their documentation with `?load_raw`). 
+
+So we can't use the `load_raw_all()` function because the logger format is different. 
+Instead we'll load by hand and then use the formatter function (`load_format()`).
+
+### Loading files
+Get a list of all the files we're interested in (only those with `DATA` in the name).
+```{r}
+l <- list.files("Data/MOCH 2023 RFID/", pattern = "DATA", full.names = TRUE, recursive = TRUE)
+l
+```
+
+
+Now let's load them, here we'll omit the middle column as it just contains `1`s.
+```{r}
+d <- read_csv(l, 
+              col_names = c("animal_id", "X", "time_orig"),
+              col_types = c("c_c"), # c = Character, _ = Skip (omit)
+              id = "file")
+d
+```
+
+### Formatting
+Now let's format it for use by feedr functions.
+
+- First we need to get the logger id from the file name
+- Then we need to convert the time to a proper date/time column.
+- Finally we can use the `load_format()` function to make sure everything is ready to go.
+
+#### Get the logger id
+To get the logger id we'll use a [regular expression](https://stringr.tidyverse.org/articles/regular-expressions.html). 
+These can be a bit tricky, but are a really cool way of matching text patterns.
+Here we match either "KC" or "UR" followed by 1 or more digits (numbers).
+```{r}
+d <- mutate(d, logger_id = str_extract(file, "(KC|UR)\\d+"))
+unique(d$logger_id)
+```
+
+Looks good!
+
+#### Get the date/time
+We tell R the format of the time column by specifying the order of the date pieces.
+Here the date is **M**onth/**D**ay/**Y**ear **H**our:**M**in:**S**ecs so we use the `mdy_hms()` function.
+
+There are some problems with the times in the files, so we'll put the good ones
+in a new column so we can see what's up. Because `load_format()` looks for a 
+column called "time", that's what we'll create.
+
+```{r}
+d <- mutate(d, time = mdy_hms(time_orig))
+```
+
+Now let's see where the trouble is.
+
+```{r}
+filter(d, is.na(time)) |>
+  select(-file)
+```
+
+Hmm, those date/times don't look right at all. At least it looks like it's all from the same file UR56:
+```{r}
+filter(d, is.na(time)) |> 
+  select(file) |>
+  distinct()
+```
+
+Perhaps we can see if this can be rescued later, for now we'll ignore them.
+
+#### Final formatting with `load_format()`
+```{r}
+d <- load_format(d, tz = "America/Vancouver") |>
+  select(-"file")
+```
+
+### Preview
+```{r}
+slice(d, 1:30) |>
+  gt()
+```
+
+
+## Save data
+```{r}
+write_csv(d, "Data/Datasets/logger_raw.csv")
+write_csv(m, "Data/Datasets/meta_raw.csv")
+```
+
+## Reproducibility
+
+### Packages
+
+You probably only need to cite feedr and possibly the tidyverse, but you should
+keep track of the packages used and their versions (under General Info).
+
+```{r}
+#| echo: false
+#| results: asis
+cat("#### tidyverse\n")
+citation("tidyverse") |> print(style = "text")
+
+cat("\n#### feedr\n")
+citation("feedr") |> print(style = "text")
+```
+
+### General info
+```{r}
+devtools::session_info()
+```
+

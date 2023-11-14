@@ -1,0 +1,456 @@
+---
+title: "Cleaning"
+fig-width: 5
+fig-height: 3
+---
+
+In this file we'll go through the metadata and logger data and look for 
+discrepancies. We'll end with a list of loggers/animals to omit from the
+analysis, as well as a list of things to check and correct if possible.
+
+Let's get started by loading the packages and data.
+
+```{r}
+#| message: false
+library(feedr)
+library(patchwork)
+library(tidyverse)
+
+d <- read_csv("Data/Datasets/logger_raw.csv")
+m <- read_csv("Data/Datasets/meta_raw.csv")
+
+source("00_functions.R") # Functions for plotting the data
+```
+
+## Clean up
+
+Now that we have the data loaded and formatted, let's clean it up.
+
+First let's check that the pit tags are as they should be.
+
+The `check_ids()` function expects a data frame with `animal_id` and with `species` (for reasons).
+Let's use our meta data and just rename the nest_box column to `species`.
+```{r}
+chk <- rename(m, "species" = "nest_box")
+d_clean <- check_ids(d, ids = chk, omit = c("TEST1", "TEST2", "TEST3", "TEST4"))
+```
+
+Good, the omitted ids are for the Test wands.
+
+And, some of the ids missing from the meta data are the ones recorded in the `alternate reported pit #` column.
+
+- "011016C8A7" (in data) "011061C8A7" (error in metadata, not in data)
+- "011016B674" (in data) "011016V674" (error in metadata, not in data)
+
+Let's fix those right away. 
+
+```{r}
+m_clean <- mutate(m, 
+                  animal_id = if_else(animal_id == "011061C8A7", "011016C8A7", animal_id),
+                  animal_id = if_else(animal_id == "011016V674", "011016B674", animal_id)) |>
+  filter(!str_detect(nest_box, "TEST")) # We'll omit the test tags while we're at it
+
+chk <- rename(m, "species" = "nest_box")
+d_clean <- check_ids(d, ids = chk, omit = c("TEST1", "TEST2", "TEST3", "TEST4"))
+```
+
+Better, but we still have some questions:
+
+- These ids are in the logger data, but there is no record of them in the metadata
+01103F5E98, 01103F5509, 011016BB3E, 0700EDE59F, 0110273064, 01103F6CE7
+
+- These ids are in the meta data, but there is no record of them in the logger data
+01103F7F4C, 0700EE2AF9, 01103F623E, 011016D4EC, 011016BFF2, 01103F7964, 01103F6479, 0700EDB80A, 01103FC6E7
+
+### Explore logger data
+
+These are the records of birds in the logger data, but not in the metadata.
+
+```{r}
+filter(d_clean, animal_id %in% c("01103F5E98", "01103F5509", "011016BB3E", 
+                                 "0700EDE59F", "0110273064", "01103F6CE7")) |>
+  group_by(animal_id, logger_id) |>
+  summarize(n = n(), date_min = min(date), date_max = max(date)) |>
+  arrange(desc(n))
+```
+
+We can probably ignore the ones with <10 hits (0700EDE59F, 0110273064, 01103F5509),
+but what about the other three, with so many hits (01103F6CE7, 011016BB3E, 01103F5E98)?
+
+We'll check them all, just in case.
+
+
+### Plot out the data ranges
+
+In this plot we're looking at the start/end points for the feeder loggers (in black)
+according to the logger data. 
+
+On top in colours, we have the start/end times of the birds based on the RFID start/end times 
+from the meta data. These are lined up with the nest box from the meta data as well.
+
+```{r}
+#| fig-width: 12
+#| fig-asp: 1
+plot_by(d_clean, by = "logger") +
+  geom_errorbarh(data = m_clean, aes(xmin = rfid_time_start, xmax = rfid_time_end, y = nest_box, colour = animal_id), 
+                 linewidth = 2, alpha = 0.3)
+```
+
+In places there are birds without a logger recording (e.g., UR56, KC66, KC04)
+
+We'll use this as a starting point to explore why some birds are in the logger
+files but not the metadata and vice versa.
+
+### Remaining problems to check
+
+Ids that are in the meta data but not in the logger data.
+```{r}
+m_sub <- m |> 
+  filter(animal_id %in% c("01103F7964", "01103FC6E7", "0700EDB80A", "01103F623E",
+                          "01103F7F4C", "01103F6479", "011016D4EC", "011016BFF2", "0700EE2AF9")) |>
+  arrange(nest_box, sex)
+m_sub
+```
+
+Ids that are in the logger data but not in the meta data
+```{r}
+d_sub <- filter(d_clean, animal_id %in% c("01103F5E98", "01103F5509", "011016BB3E", "0700EDE59F", "0110273064", "01103F6CE7")) |>
+  group_by(animal_id, logger_id) |>
+  summarize(n = n(), date_min = min(date), date_max = max(date)) |>
+  arrange(desc(n))
+d_sub
+```
+
+Let's visualize this to make it easier on ourselves
+```{r}
+#| fig-width: 12
+#| fig-asp: 1
+plot_by(d, by = "logger", id = d_sub$animal_id) +
+  geom_errorbarh(data = m_sub, aes(xmin = rfid_time_start, xmax = rfid_time_end, y = nest_box, colour = animal_id), 
+                 linewidth = 2, alpha = 0.5) +
+  labs(title = "Mismatch between loggers and metadata", 
+       subtitle = "Colourful points are IDs in logger data not in metadata\nColourful lines are IDs in metadata not in logger data")
+```
+
+Let's see if we can clear these problems up.
+
+Starting from the top!
+
+
+### UR56
+
+UR56 has problems with missing data in the logger files...
+
+```{r}
+filter(m, nest_box == "UR56")
+filter(d, logger_id == "UR56") |>
+  group_by(animal_id) |>
+  summarize(min = min(time), max = max(time), n = n())
+```
+
+### UR47 and 01103F6CE7
+
+01103F6CE7 is in the logger data but not in the metadata.
+
+It looks like that bird was tagged at the same time as the next box was set up with a logger.
+
+Let's see what other birds used that box...
+
+```{r}
+plot_by(d_clean, id = "UR47", by = "animal")
+```
+
+Well, there are only two birds using that box. 
+
+And only one of them is in the metadata, but we do have another, 01103FC6E7
+```{r}
+filter(m_clean, nest_box == "UR47")
+```
+
+So we have 
+
+- "01103FC6E7" in the data, but not in the metadata
+- "01103F6CE7" in the metadata, but not in the data
+
+So we have another typo: 01103FC6E7 in the meta, should actually be 01103F6CE7
+
+```{r}
+m_clean <- mutate(m_clean, 
+                  animal_id = if_else(animal_id == "01103FC6E7", "01103F6CE7", animal_id))
+```
+
+### UR45 and 0700EDB80A
+
+0700EDB80A is in the metadata but not in the logger data.
+
+It looks like that bird was tagged at the same time as the next box was set up with a logger.
+
+Let's see what other birds used that box...
+
+```{r}
+filter(m, nest_box == "UR45")
+plot_by(d_clean, id = "UR45", by = "animal")
+```
+
+Hmm, there is only one bird using that box... perhaps our bird's RFID tag malfunctioned?
+
+> Check - did 0700EDB80A stay at that nestbox?
+
+### UR37 and 0700EDE59F & 0110273064
+
+These two ids were not recorded in the metadata and had very few visits to UR37 (and only UR37)
+```{r}
+plot_by(d_clean, id = "UR37", by = "animal")
+```
+
+```{r}
+#| fig-width: 10
+plot_by(d_clean, id = "0700EDE59F", by = "logger") +
+plot_by(d_clean, id = "0110273064", by = "logger")
+```
+
+Let's omit them
+```{r}
+d_clean <- filter(d_clean, !animal_id %in% c("0700EDE59F", "0110273064"))
+```
+
+> We'll assume they're left over from some other study? Or other TESTS?
+
+
+### KC66 and 01103F6479 & 01103F7964
+
+01103F6479 & 01103F7964 are in the meta data but not in the logger data.
+
+We have them in the metadata
+```{r}
+filter(m, nest_box == "KC66")
+```
+
+But not in the logger data
+```{r}
+filter(d_clean, logger_id == "KC66")
+```
+
+There are no logger files for KC66, so perhaps not surprising that we don't have
+any hits for these two birds.
+
+> Check - Are these files truly missing? Or just didn't get added?
+
+### KC62 and 001016BFF2 & 011016D4EC
+
+001016BFF2 & 011016D4EC are in the metdata but not in the logger data.
+
+We have them in the metadata
+```{r}
+filter(m, nest_box == "KC62")
+```
+
+But no hits for this nest box in the logger data
+```{r}
+filter(d_clean, logger_id == "KC62")
+```
+
+There is a logger file for KC62, but it only has test hits (check the non-cleaned data with test reads).
+```{r}
+filter(d, logger_id == "KC62")
+```
+
+And the meta data shows that the fledge failed, so perhaps the parents weren't 
+using the box at this time.
+
+> Check - Do we know when the nest failed? Do we know if the parents weren't
+> using the box?
+
+### KC58 and 011016BB3E
+
+011016BB3E is in the logger data but not in the metadata.
+
+We only have one record of a bird at this nest box in the metadata
+```{r}
+filter(m, nest_box == "KC58")
+```
+
+But we clearly have evidence of two birds visiting this box. 
+```{r}
+plot_by(d_clean, id = "KC58", by = "animal")
+```
+
+```{r}
+filter(d_clean, animal_id == "011016BB3E") |>
+  group_by(logger_id) |>
+  summarize(min = min(date), max = max(date), n = n())
+```
+
+
+> Check - Is 011016BB3E the male at this box and missing from the metadata?
+
+
+### KC41
+
+01103F5509 is not in the metadata and has a single hit on logger KC41 (and only logger KC41)
+
+```{r}
+plot_by(d_clean, id = "01103F5509", by = "logger")
+```
+
+```{r}
+plot_by(d_clean, id = "KC41", by = "animal")
+```
+
+KC41 has two other well established birds, though, so we'll assume
+that 01103F5509 is an individual tagged elsewhere and was just checking things 
+out.
+
+```{r}
+d_clean <- filter(d_clean, animal_id != "01103F5509")
+```
+
+
+
+### KC21 and 01103F5E98
+
+01103F5E98 is in the logger data but not in the metadata.
+
+We only have one record of a bird at this nest box in the metadata
+```{r}
+filter(m, nest_box == "KC21")
+```
+
+And we only have evidence of one bird (but a different one) visiting this box. 
+```{r}
+plot_by(d_clean, id = "KC21", by = "animal")
+```
+
+```{r}
+filter(d_clean, animal_id == "01103F5E98") |>
+  group_by(logger_id) |>
+  summarize(min = min(date), max = max(date), n = n())
+```
+
+But this bird in the metadata didn't have fledglings and there aren't many 
+visits to the logger by the other bird.
+
+> Check - Do we know when the nest failed? Is it possible the parents weren't
+> using the box?
+>
+> Is 01103F5E98 missing from the metadata?
+
+
+### KC15 and 0700EE2AF9
+
+0700EE2AF9 is in the metadata but not in the logger data.
+
+We have two records of birds at this nest box in the metadata.
+```{r}
+filter(m, nest_box == "KC15")
+```
+
+And both records show the same start/end date for their RFID tags...
+
+```{r}
+plot_by(d_clean, id = "KC15", by = "animal")
+filter(d_clean, logger_id == "KC15")
+```
+
+We only have a couple reads on this logger (and it's from one bird, earlier than the metadata says it got an RFID tag).
+
+This nest also failed to fledge.
+
+> Check - Do we know when the nest failed? Is it possible the parents weren't
+> using the box?
+> 
+> Check - Are the RFID start dates in the meta data correct for these two birds?
+
+
+### KC04 and 01103F7F4C
+
+01103F7F4C is in the metadata but not in the logger data.
+
+We only have one record of a bird at this nest box in the metadata.
+```{r}
+filter(m, nest_box == "KC04")
+```
+
+And no records of usage of the next box in the logger data
+
+```{r}
+plot_by(d_clean, id = "KC04", by = "animal")
+filter(d_clean, logger_id == "KC04")
+```
+
+But there was a test record
+```{r}
+filter(d, logger_id == "KC04")
+```
+
+This nest also failed to fledge.
+
+> Check - Do we know when the nest failed? Is it possible the parents weren't
+> using the box?
+
+### Check for mates
+
+All nest boxes should have two parents
+```{r}
+count(m_clean, nest_box) |>
+  filter(n != 2)
+```
+
+KC04, KC21, KC58 have been dealt with, what about KC49?
+
+
+```{r}
+filter(m_clean, nest_box == "KC49")
+plot_by(d_clean, id = "KC49", by = "animal")
+```
+
+Only one individual... presumably only one was tagged.
+
+## Finalizing
+
+To keep things clean, we will remove birds with problems for whom the nest failed. 
+
+We'll also omit UR56 as we have no correct times for that logger
+
+```{r}
+omit <- c("KC62", "KC21", "KC15", "KC04", "UR56")
+
+m_clean <- mutate(m_clean, omit = nest_box %in% omit)
+d_clean <- filter(d_clean, !logger_id %in% omit)
+
+write_csv(d_clean, "Data/Datasets/logger_clean.csv")
+write_csv(m_clean, "Data/Datasets/meta_clean.csv")
+```
+
+
+## To check
+
+- Check the birds who's nests failed... should we be omitting all of them?\
+- Check bird 0700EDB80A. Did they disappear from their site? Or did their RFID tag malfunction
+- Check for missing KC66 logger files, did the logger fail? Or are the files just somewhere else?
+- Check/add 011016BB3E to the metadata (from nest box KC58)
+- Check/add 01103F5E98 to the metadata (from nest box KC21) [but only a few visits...]
+- Check the start dates for the RFID tags in the metadata for 011016D09D and 0700EE2AF9, do they need to be 
+  corrected? (For nest box KC15)
+  
+## Reproducibility
+
+### Packages
+
+You probably only need to cite feedr and possibly the tidyverse, but you should
+keep track of the packages used and their versions (under General Info).
+
+```{r}
+#| echo: false
+#| results: asis
+cat("#### tidyverse\n")
+citation("tidyverse") |> print(style = "text")
+
+cat("\n#### feedr\n")
+citation("feedr") |> print(style = "text")
+```
+
+### General info
+```{r}
+devtools::session_info()
+```

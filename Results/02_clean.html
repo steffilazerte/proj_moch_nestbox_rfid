@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Steffi">
+<meta name="dcterms.date" content="2023-11-14">
+
+<title>Cleaning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="02_clean_files/libs/clipboard/clipboard.min.js"></script>
+<script src="02_clean_files/libs/quarto-html/quarto.js"></script>
+<script src="02_clean_files/libs/quarto-html/popper.min.js"></script>
+<script src="02_clean_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="02_clean_files/libs/quarto-html/anchor.min.js"></script>
+<link href="02_clean_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="02_clean_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="02_clean_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="02_clean_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="02_clean_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-full">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#clean-up" id="toc-clean-up" class="nav-link active" data-scroll-target="#clean-up">Clean up</a>
+  <ul class="collapse">
+  <li><a href="#explore-logger-data" id="toc-explore-logger-data" class="nav-link" data-scroll-target="#explore-logger-data">Explore logger data</a></li>
+  <li><a href="#plot-out-the-data-ranges" id="toc-plot-out-the-data-ranges" class="nav-link" data-scroll-target="#plot-out-the-data-ranges">Plot out the data ranges</a></li>
+  <li><a href="#remaining-problems-to-check" id="toc-remaining-problems-to-check" class="nav-link" data-scroll-target="#remaining-problems-to-check">Remaining problems to check</a></li>
+  <li><a href="#ur56" id="toc-ur56" class="nav-link" data-scroll-target="#ur56">UR56</a></li>
+  <li><a href="#ur47-and-01103f6ce7" id="toc-ur47-and-01103f6ce7" class="nav-link" data-scroll-target="#ur47-and-01103f6ce7">UR47 and 01103F6CE7</a></li>
+  <li><a href="#ur45-and-0700edb80a" id="toc-ur45-and-0700edb80a" class="nav-link" data-scroll-target="#ur45-and-0700edb80a">UR45 and 0700EDB80A</a></li>
+  <li><a href="#ur37-and-0700ede59f-0110273064" id="toc-ur37-and-0700ede59f-0110273064" class="nav-link" data-scroll-target="#ur37-and-0700ede59f-0110273064">UR37 and 0700EDE59F &amp; 0110273064</a></li>
+  <li><a href="#kc66-and-01103f6479-01103f7964" id="toc-kc66-and-01103f6479-01103f7964" class="nav-link" data-scroll-target="#kc66-and-01103f6479-01103f7964">KC66 and 01103F6479 &amp; 01103F7964</a></li>
+  <li><a href="#kc62-and-001016bff2-011016d4ec" id="toc-kc62-and-001016bff2-011016d4ec" class="nav-link" data-scroll-target="#kc62-and-001016bff2-011016d4ec">KC62 and 001016BFF2 &amp; 011016D4EC</a></li>
+  <li><a href="#kc58-and-011016bb3e" id="toc-kc58-and-011016bb3e" class="nav-link" data-scroll-target="#kc58-and-011016bb3e">KC58 and 011016BB3E</a></li>
+  <li><a href="#kc41" id="toc-kc41" class="nav-link" data-scroll-target="#kc41">KC41</a></li>
+  <li><a href="#kc21-and-01103f5e98" id="toc-kc21-and-01103f5e98" class="nav-link" data-scroll-target="#kc21-and-01103f5e98">KC21 and 01103F5E98</a></li>
+  <li><a href="#kc15-and-0700ee2af9" id="toc-kc15-and-0700ee2af9" class="nav-link" data-scroll-target="#kc15-and-0700ee2af9">KC15 and 0700EE2AF9</a></li>
+  <li><a href="#kc04-and-01103f7f4c" id="toc-kc04-and-01103f7f4c" class="nav-link" data-scroll-target="#kc04-and-01103f7f4c">KC04 and 01103F7F4C</a></li>
+  <li><a href="#check-for-mates" id="toc-check-for-mates" class="nav-link" data-scroll-target="#check-for-mates">Check for mates</a></li>
+  </ul></li>
+  <li><a href="#finalizing" id="toc-finalizing" class="nav-link" data-scroll-target="#finalizing">Finalizing</a></li>
+  <li><a href="#to-check" id="toc-to-check" class="nav-link" data-scroll-target="#to-check">To check</a></li>
+  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a>
+  <ul class="collapse">
+  <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#general-info" id="toc-general-info" class="nav-link" data-scroll-target="#general-info">General info</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Cleaning</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Steffi </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 14, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In this file we’ll go through the metadata and logger data and look for discrepancies. We’ll end with a list of loggers/animals to omit from the analysis, as well as a list of things to check and correct if possible.</p>
+<p>Let’s get started by loading the packages and data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(feedr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Data/Datasets/logger_raw.csv"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Data/Datasets/meta_raw.csv"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"00_functions.R"</span>) <span class="co"># Functions for plotting the data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="clean-up" class="level2">
+<h2 class="anchored" data-anchor-id="clean-up">Clean up</h2>
+<p>Now that we have the data loaded and formatted, let’s clean it up.</p>
+<p>First let’s check that the pit tags are as they should be.</p>
+<p>The check_ids function expects a data frame with <code>animal_id</code> and with <code>species</code> (for reasons). Let’s use our meta data and just rename the nest_box column to <code>species</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>chk <span class="ot">&lt;-</span> <span class="fu">rename</span>(m, <span class="st">"species"</span> <span class="ot">=</span> <span class="st">"nest_box"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>d_clean <span class="ot">&lt;-</span> <span class="fu">check_ids</span>(d, <span class="at">ids =</span> chk, <span class="at">omit =</span> <span class="fu">c</span>(<span class="st">"TEST1"</span>, <span class="st">"TEST2"</span>, <span class="st">"TEST3"</span>, <span class="st">"TEST4"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Some animal_ids present in your data do not exist in the animal_id index: 01103F5E98, 01103F5509, 011016B674, 011016BB3E, 011016C8A7, 0700EDE59F, 0110273064, 01103F6CE7</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Some animal_ids present in your animal_id index, are not in your data: 01103F7F4C, 0700EE2AF9, 01103F623E, 011016V674, 011061C8A7, 011016D4EC, 011016BFF2, 01103F7964, 01103F6479, 0700EDB80A, 01103FC6E7</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following animal_ids have been omitted: 01103F8FC7, 0700EE430E, 0700ED9EC0, 01103F3B07</code></pre>
+</div>
+</div>
+<p>Good, the omitted ids are for the Test wands.</p>
+<p>And, some of the ids missing from the meta data are the ones recorded in the <code>alternate reported pit #</code> column.</p>
+<ul>
+<li>“011016C8A7” (in data) “011061C8A7” (error in metadata, not in data)</li>
+<li>“011016B674” (in data) “011016V674” (error in metadata, not in data)</li>
+</ul>
+<p>Let’s fix those right away.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>m_clean <span class="ot">&lt;-</span> <span class="fu">mutate</span>(m, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">animal_id =</span> <span class="fu">if_else</span>(animal_id <span class="sc">==</span> <span class="st">"011061C8A7"</span>, <span class="st">"011016C8A7"</span>, animal_id),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">animal_id =</span> <span class="fu">if_else</span>(animal_id <span class="sc">==</span> <span class="st">"011016V674"</span>, <span class="st">"011016B674"</span>, animal_id)) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(nest_box, <span class="st">"TEST"</span>)) <span class="co"># We'll omit the test tags while we're at it</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>chk <span class="ot">&lt;-</span> <span class="fu">rename</span>(m, <span class="st">"species"</span> <span class="ot">=</span> <span class="st">"nest_box"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>d_clean <span class="ot">&lt;-</span> <span class="fu">check_ids</span>(d, <span class="at">ids =</span> chk, <span class="at">omit =</span> <span class="fu">c</span>(<span class="st">"TEST1"</span>, <span class="st">"TEST2"</span>, <span class="st">"TEST3"</span>, <span class="st">"TEST4"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Some animal_ids present in your data do not exist in the animal_id index: 01103F5E98, 01103F5509, 011016B674, 011016BB3E, 011016C8A7, 0700EDE59F, 0110273064, 01103F6CE7</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Some animal_ids present in your animal_id index, are not in your data: 01103F7F4C, 0700EE2AF9, 01103F623E, 011016V674, 011061C8A7, 011016D4EC, 011016BFF2, 01103F7964, 01103F6479, 0700EDB80A, 01103FC6E7</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following animal_ids have been omitted: 01103F8FC7, 0700EE430E, 0700ED9EC0, 01103F3B07</code></pre>
+</div>
+</div>
+<p>Better, but we still have some questions:</p>
+<ul>
+<li><p>These ids are in the logger data, but there is no record of them in the metadata 01103F5E98, 01103F5509, 011016BB3E, 0700EDE59F, 0110273064, 01103F6CE7</p></li>
+<li><p>These ids are in the meta data, but there is no record of them in the logger data 01103F7F4C, 0700EE2AF9, 01103F623E, 011016D4EC, 011016BFF2, 01103F7964, 01103F6479, 0700EDB80A, 01103FC6E7</p></li>
+</ul>
+<section id="explore-logger-data" class="level3">
+<h3 class="anchored" data-anchor-id="explore-logger-data">Explore logger data</h3>
+<p>These are the records of birds in the logger data, but not in the metadata.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d_clean, animal_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"01103F5E98"</span>, <span class="st">"01103F5509"</span>, <span class="st">"011016BB3E"</span>, </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="st">"0700EDE59F"</span>, <span class="st">"0110273064"</span>, <span class="st">"01103F6CE7"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(animal_id, logger_id) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">date_min =</span> <span class="fu">min</span>(date), <span class="at">date_max =</span> <span class="fu">max</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'animal_id'. You can override using the `.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+# Groups:   animal_id [6]
+  animal_id  logger_id     n date_min   date_max  
+  &lt;chr&gt;      &lt;chr&gt;     &lt;int&gt; &lt;date&gt;     &lt;date&gt;    
+1 01103F6CE7 UR47        677 2023-05-22 2023-05-25
+2 011016BB3E KC58        418 2023-05-27 2023-05-30
+3 01103F5E98 KC21         87 2023-05-26 2023-05-27
+4 0700EDE59F UR37          8 2023-05-30 2023-06-01
+5 0110273064 UR37          1 2023-05-31 2023-05-31
+6 01103F5509 KC41          1 2023-06-03 2023-06-03</code></pre>
+</div>
+</div>
+<p>We can probably ignore the ones with &lt;10 hits (0700EDE59F, 0110273064, 01103F5509), but what about the other three, with so many hits (01103F6CE7, 011016BB3E, 01103F5E98)?</p>
+<p>We’ll check them all, just in case.</p>
+</section>
+<section id="plot-out-the-data-ranges" class="level3">
+<h3 class="anchored" data-anchor-id="plot-out-the-data-ranges">Plot out the data ranges</h3>
+<p>In this plot we’re looking at the start/end points for the feeder loggers (in black) according to the logger data.</p>
+<p>On top in colours, we have the start/end times of the birds based on the RFID start/end times from the meta data. These are lined up with the nest box from the meta data as well.</p>
+<div class="cell" data-fig.asp="1">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">by =</span> <span class="st">"logger"</span>) <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="at">data =</span> m_clean, <span class="fu">aes</span>(<span class="at">xmin =</span> rfid_time_start, <span class="at">xmax =</span> rfid_time_end, <span class="at">y =</span> nest_box, <span class="at">colour =</span> animal_id), </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">linewidth =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="1152"></p>
+</div>
+</div>
+<p>In places there are birds without a logger recording (e.g., UR56, KC66, KC04)</p>
+<p>We’ll use this as a starting point to explore why some birds are in the logger files but not the metadata and vice versa.</p>
+</section>
+<section id="remaining-problems-to-check" class="level3">
+<h3 class="anchored" data-anchor-id="remaining-problems-to-check">Remaining problems to check</h3>
+<p>Ids that are in the meta data but not in the logger data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>m_sub <span class="ot">&lt;-</span> m <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(animal_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"01103F7964"</span>, <span class="st">"01103FC6E7"</span>, <span class="st">"0700EDB80A"</span>, <span class="st">"01103F623E"</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                          <span class="st">"01103F7F4C"</span>, <span class="st">"01103F6479"</span>, <span class="st">"011016D4EC"</span>, <span class="st">"011016BFF2"</span>, <span class="st">"0700EE2AF9"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(nest_box, sex)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>m_sub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC04     01103F7F… F     2023-05-08 2023-05-25 NA          2023-05-27 11:27:00 2023-05-30 09:10:00
+2 KC15     0700EE2A… M     2023-05-10 2023-05-29 NA          2023-06-03 08:39:00 2023-06-03 08:39:00
+3 KC21     01103F62… M     2023-05-06 2023-05-25 NA          2023-05-26 10:47:00 2023-05-30 11:06:00
+4 KC62     011016D4… F     2023-05-10 2023-05-28 NA          2023-05-30 11:40:00 2023-06-02 10:12:00
+5 KC62     011016BF… M     2023-05-10 2023-05-28 NA          2023-05-30 11:40:00 2023-06-02 10:12:00
+6 KC66     01103F79… F     2023-05-04 2023-05-21 2023-06-11  2023-05-24 09:15:00 2023-06-01 11:59:00
+7 KC66     01103F64… M     2023-05-04 2023-05-21 2023-06-11  2023-05-24 09:15:00 2023-06-01 11:59:00
+8 UR45     0700EDB8… M     2023-04-29 2023-05-18 2023-06-09  2023-05-20 13:36:00 2023-05-29 09:40:00
+9 UR47     01103FC6… M     2023-05-01 2023-05-21 2023-06-10  2023-05-22 12:55:00 2023-06-01 00:00:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>Ids that are in the logger data but not in the meta data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>d_sub <span class="ot">&lt;-</span> <span class="fu">filter</span>(d_clean, animal_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"01103F5E98"</span>, <span class="st">"01103F5509"</span>, <span class="st">"011016BB3E"</span>, <span class="st">"0700EDE59F"</span>, <span class="st">"0110273064"</span>, <span class="st">"01103F6CE7"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(animal_id, logger_id) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">date_min =</span> <span class="fu">min</span>(date), <span class="at">date_max =</span> <span class="fu">max</span>(date)) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'animal_id'. You can override using the `.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>d_sub</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+# Groups:   animal_id [6]
+  animal_id  logger_id     n date_min   date_max  
+  &lt;chr&gt;      &lt;chr&gt;     &lt;int&gt; &lt;date&gt;     &lt;date&gt;    
+1 01103F6CE7 UR47        677 2023-05-22 2023-05-25
+2 011016BB3E KC58        418 2023-05-27 2023-05-30
+3 01103F5E98 KC21         87 2023-05-26 2023-05-27
+4 0700EDE59F UR37          8 2023-05-30 2023-06-01
+5 0110273064 UR37          1 2023-05-31 2023-05-31
+6 01103F5509 KC41          1 2023-06-03 2023-06-03</code></pre>
+</div>
+</div>
+<p>Let’s visualize this to make it easier on ourselves</p>
+<div class="cell" data-fig.asp="1">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d, <span class="at">by =</span> <span class="st">"logger"</span>, <span class="at">id =</span> d_sub<span class="sc">$</span>animal_id) <span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="at">data =</span> m_sub, <span class="fu">aes</span>(<span class="at">xmin =</span> rfid_time_start, <span class="at">xmax =</span> rfid_time_end, <span class="at">y =</span> nest_box, <span class="at">colour =</span> animal_id), </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">linewidth =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Mismatch between loggers and metadata"</span>, </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Colourful points are IDs in logger data not in metadata</span><span class="sc">\n</span><span class="st">Colourful lines are IDs in metadata not in logger data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="1152"></p>
+</div>
+</div>
+<p>Let’s see if we can clear these problems up.</p>
+<p>Starting from the top!</p>
+</section>
+<section id="ur56" class="level3">
+<h3 class="anchored" data-anchor-id="ur56">UR56</h3>
+<p>UR56 has problems with missing data in the logger files…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"UR56"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 UR56     011016A4… M     2023-05-04 2023-05-21 2023-06-11  2023-05-27 12:27:00 2023-06-06 12:00:00
+2 UR56     01103F3A… F     2023-05-04 2023-05-21 2023-06-11  2023-05-27 12:27:00 2023-06-06 12:00:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d, logger_id <span class="sc">==</span> <span class="st">"UR56"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(animal_id) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min =</span> <span class="fu">min</span>(time), <span class="at">max =</span> <span class="fu">max</span>(time), <span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  animal_id  min    max        n
+  &lt;chr&gt;      &lt;dttm&gt; &lt;dttm&gt; &lt;int&gt;
+1 011016A4AE NA     NA       199
+2 01103F3A6A NA     NA       460
+3 01103F8FC7 NA     NA         2</code></pre>
+</div>
+</div>
+</section>
+<section id="ur47-and-01103f6ce7" class="level3">
+<h3 class="anchored" data-anchor-id="ur47-and-01103f6ce7">UR47 and 01103F6CE7</h3>
+<p>01103F6CE7 is in the logger data but not in the metadata.</p>
+<p>It looks like that bird was tagged at the same time as the next box was set up with a logger.</p>
+<p>Let’s see what other birds used that box…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"UR47"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Well, there are only two birds using that box.</p>
+<p>And only one of them is in the metadata, but we do have another, 01103FC6E7</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m_clean, nest_box <span class="sc">==</span> <span class="st">"UR47"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 UR47     01103FC6… M     2023-05-01 2023-05-21 2023-06-10  2023-05-22 12:55:00 2023-06-01 00:00:00
+2 UR47     01103F69… F     2023-05-01 2023-05-21 2023-06-10  2023-05-22 12:55:00 2023-06-01 00:00:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>So we have</p>
+<ul>
+<li>“01103FC6E7” in the data, but not in the metadata</li>
+<li>“01103F6CE7” in the metadata, but not in the data</li>
+</ul>
+<p>So we have another typo: 01103FC6E7 in the meta, should actually be 01103F6CE7</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>m_clean <span class="ot">&lt;-</span> <span class="fu">mutate</span>(m_clean, </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">animal_id =</span> <span class="fu">if_else</span>(animal_id <span class="sc">==</span> <span class="st">"01103FC6E7"</span>, <span class="st">"01103F6CE7"</span>, animal_id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ur45-and-0700edb80a" class="level3">
+<h3 class="anchored" data-anchor-id="ur45-and-0700edb80a">UR45 and 0700EDB80A</h3>
+<p>0700EDB80A is in the metadata but not in the logger data.</p>
+<p>It looks like that bird was tagged at the same time as the next box was set up with a logger.</p>
+<p>Let’s see what other birds used that box…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"UR45"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 UR45     011016BE… F     2023-04-29 2023-05-18 2023-06-09  2023-05-20 13:36:00 2023-05-29 09:40:00
+2 UR45     0700EDB8… M     2023-04-29 2023-05-18 2023-06-09  2023-05-20 13:36:00 2023-05-29 09:40:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"UR45"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Hmm, there is only one bird using that box… perhaps our bird’s RFID tag malfunctioned?</p>
+<blockquote class="blockquote">
+<p>Check - did 0700EDB80A stay at that nestbox?</p>
+</blockquote>
+</section>
+<section id="ur37-and-0700ede59f-0110273064" class="level3">
+<h3 class="anchored" data-anchor-id="ur37-and-0700ede59f-0110273064">UR37 and 0700EDE59F &amp; 0110273064</h3>
+<p>These two ids were not recorded in the metadata and had very few visits to UR37 (and only UR37)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"UR37"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"0700EDE59F"</span>, <span class="at">by =</span> <span class="st">"logger"</span>) <span class="sc">+</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"0110273064"</span>, <span class="at">by =</span> <span class="st">"logger"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+<p>Let’s omit them</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>d_clean <span class="ot">&lt;-</span> <span class="fu">filter</span>(d_clean, <span class="sc">!</span>animal_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"0700EDE59F"</span>, <span class="st">"0110273064"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>We’ll assume they’re left over from some other study? Or other TESTS?</p>
+</blockquote>
+</section>
+<section id="kc66-and-01103f6479-01103f7964" class="level3">
+<h3 class="anchored" data-anchor-id="kc66-and-01103f6479-01103f7964">KC66 and 01103F6479 &amp; 01103F7964</h3>
+<p>01103F6479 &amp; 01103F7964 are in the meta data but not in the logger data.</p>
+<p>We have them in the metadata</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"KC66"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC66     01103F79… F     2023-05-04 2023-05-21 2023-06-11  2023-05-24 09:15:00 2023-06-01 11:59:00
+2 KC66     01103F64… M     2023-05-04 2023-05-21 2023-06-11  2023-05-24 09:15:00 2023-06-01 11:59:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>But not in the logger data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d_clean, logger_id <span class="sc">==</span> <span class="st">"KC66"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 5
+# ℹ 5 variables: animal_id &lt;chr&gt;, date &lt;date&gt;, time &lt;dttm&gt;, logger_id &lt;chr&gt;, time_orig &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>There are no logger files for KC66, so perhaps not surprising that we don’t have any hits for these two birds.</p>
+<blockquote class="blockquote">
+<p>Check - Are these files truly missing? Or just didn’t get added?</p>
+</blockquote>
+</section>
+<section id="kc62-and-001016bff2-011016d4ec" class="level3">
+<h3 class="anchored" data-anchor-id="kc62-and-001016bff2-011016d4ec">KC62 and 001016BFF2 &amp; 011016D4EC</h3>
+<p>001016BFF2 &amp; 011016D4EC are in the metdata but not in the logger data.</p>
+<p>We have them in the metadata</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"KC62"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC62     011016D4… F     2023-05-10 2023-05-28 NA          2023-05-30 11:40:00 2023-06-02 10:12:00
+2 KC62     011016BF… M     2023-05-10 2023-05-28 NA          2023-05-30 11:40:00 2023-06-02 10:12:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>But no hits for this nest box in the logger data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d_clean, logger_id <span class="sc">==</span> <span class="st">"KC62"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 5
+# ℹ 5 variables: animal_id &lt;chr&gt;, date &lt;date&gt;, time &lt;dttm&gt;, logger_id &lt;chr&gt;, time_orig &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>There is a logger file for KC62, but it only has test hits (check the non-cleaned data with test reads).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d, logger_id <span class="sc">==</span> <span class="st">"KC62"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  animal_id  date       time                logger_id time_orig          
+  &lt;chr&gt;      &lt;date&gt;     &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;              
+1 01103F8FC7 2023-05-30 2023-05-30 11:38:50 KC62      05/30/2023 11:38:50
+2 01103F8FC7 2023-06-02 2023-06-02 10:10:08 KC62      06/02/2023 10:10:08</code></pre>
+</div>
+</div>
+<p>And the meta data shows that the fledge failed, so perhaps the parents weren’t using the box at this time.</p>
+<blockquote class="blockquote">
+<p>Check - Do we know when the nest failed? Do we know if the parents weren’t using the box?</p>
+</blockquote>
+</section>
+<section id="kc58-and-011016bb3e" class="level3">
+<h3 class="anchored" data-anchor-id="kc58-and-011016bb3e">KC58 and 011016BB3E</h3>
+<p>011016BB3E is in the logger data but not in the metadata.</p>
+<p>We only have one record of a bird at this nest box in the metadata</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"KC58"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC58     01103F8B… F     2023-05-08 2023-05-26 2023-06-16  2023-05-27 14:30:00 2023-06-06 09:00:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>But we clearly have evidence of two birds visiting this box.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"KC58"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d_clean, animal_id <span class="sc">==</span> <span class="st">"011016BB3E"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(logger_id) <span class="sc">|&gt;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min =</span> <span class="fu">min</span>(date), <span class="at">max =</span> <span class="fu">max</span>(date), <span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  logger_id min        max            n
+  &lt;chr&gt;     &lt;date&gt;     &lt;date&gt;     &lt;int&gt;
+1 KC58      2023-05-27 2023-05-30   418</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Check - Is 011016BB3E the male at this box and missing from the metadata?</p>
+</blockquote>
+</section>
+<section id="kc41" class="level3">
+<h3 class="anchored" data-anchor-id="kc41">KC41</h3>
+<p>01103F5509 is not in the metadata and has a single hit on logger KC41 (and only logger KC41)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"01103F5509"</span>, <span class="at">by =</span> <span class="st">"logger"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"KC41"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>KC41 has two other well established birds, though, so we’ll assume that 01103F5509 is an individual tagged elsewhere and was just checking things out.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>d_clean <span class="ot">&lt;-</span> <span class="fu">filter</span>(d_clean, animal_id <span class="sc">!=</span> <span class="st">"01103F5509"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="kc21-and-01103f5e98" class="level3">
+<h3 class="anchored" data-anchor-id="kc21-and-01103f5e98">KC21 and 01103F5E98</h3>
+<p>01103F5E98 is in the logger data but not in the metadata.</p>
+<p>We only have one record of a bird at this nest box in the metadata</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"KC21"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC21     01103F62… M     2023-05-06 2023-05-25 NA          2023-05-26 10:47:00 2023-05-30 11:06:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>And we only have evidence of one bird (but a different one) visiting this box.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"KC21"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d_clean, animal_id <span class="sc">==</span> <span class="st">"01103F5E98"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(logger_id) <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min =</span> <span class="fu">min</span>(date), <span class="at">max =</span> <span class="fu">max</span>(date), <span class="at">n =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  logger_id min        max            n
+  &lt;chr&gt;     &lt;date&gt;     &lt;date&gt;     &lt;int&gt;
+1 KC21      2023-05-26 2023-05-27    87</code></pre>
+</div>
+</div>
+<p>But this bird in the metadata didn’t have fledglings and there aren’t many visits to the logger by the other bird.</p>
+<blockquote class="blockquote">
+<p>Check - Do we know when the nest failed? Is it possible the parents weren’t using the box?</p>
+<p>Is 01103F5E98 missing from the metadata?</p>
+</blockquote>
+</section>
+<section id="kc15-and-0700ee2af9" class="level3">
+<h3 class="anchored" data-anchor-id="kc15-and-0700ee2af9">KC15 and 0700EE2AF9</h3>
+<p>0700EE2AF9 is in the metadata but not in the logger data.</p>
+<p>We have two records of birds at this nest box in the metadata.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"KC15"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC15     011016D0… F     2023-05-10 2023-05-29 NA          2023-06-03 08:39:00 2023-06-03 08:39:00
+2 KC15     0700EE2A… M     2023-05-10 2023-05-29 NA          2023-06-03 08:39:00 2023-06-03 08:39:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>And both records show the same start/end date for their RFID tags…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"KC15"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="480"></p>
+</div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d_clean, logger_id <span class="sc">==</span> <span class="st">"KC15"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  animal_id  date       time                logger_id time_orig          
+  &lt;chr&gt;      &lt;date&gt;     &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;              
+1 011016D09D 2023-05-31 2023-05-31 15:01:23 KC15      05/31/2023 15:01:23
+2 011016D09D 2023-05-31 2023-05-31 16:02:56 KC15      05/31/2023 16:02:56
+3 011016D09D 2023-05-31 2023-05-31 16:03:00 KC15      05/31/2023 16:03:00
+4 011016D09D 2023-05-31 2023-05-31 16:03:08 KC15      05/31/2023 16:03:08
+5 011016D09D 2023-05-31 2023-05-31 16:03:16 KC15      05/31/2023 16:03:16</code></pre>
+</div>
+</div>
+<p>We only have a couple reads on this logger (and it’s from one bird, earlier than the metadata says it got an RFID tag).</p>
+<p>This nest also failed to fledge.</p>
+<blockquote class="blockquote">
+<p>Check - Do we know when the nest failed? Is it possible the parents weren’t using the box?</p>
+<p>Check - Are the RFID start dates in the meta data correct for these two birds?</p>
+</blockquote>
+</section>
+<section id="kc04-and-01103f7f4c" class="level3">
+<h3 class="anchored" data-anchor-id="kc04-and-01103f7f4c">KC04 and 01103F7F4C</h3>
+<p>01103F7F4C is in the metadata but not in the logger data.</p>
+<p>We only have one record of a bird at this nest box in the metadata.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m, nest_box <span class="sc">==</span> <span class="st">"KC04"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC04     01103F7F… F     2023-05-08 2023-05-25 NA          2023-05-27 11:27:00 2023-05-30 09:10:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>And no records of usage of the next box in the logger data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"KC04"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="480"></p>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d_clean, logger_id <span class="sc">==</span> <span class="st">"KC04"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 5
+# ℹ 5 variables: animal_id &lt;chr&gt;, date &lt;date&gt;, time &lt;dttm&gt;, logger_id &lt;chr&gt;, time_orig &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>But there was a test record</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(d, logger_id <span class="sc">==</span> <span class="st">"KC04"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  animal_id  date       time                logger_id time_orig          
+  &lt;chr&gt;      &lt;date&gt;     &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;              
+1 0700EE430E 2023-05-27 2023-05-27 11:26:53 KC04      05/27/2023 11:26:53</code></pre>
+</div>
+</div>
+<p>This nest also failed to fledge.</p>
+<blockquote class="blockquote">
+<p>Check - Do we know when the nest failed? Is it possible the parents weren’t using the box?</p>
+</blockquote>
+</section>
+<section id="check-for-mates" class="level3">
+<h3 class="anchored" data-anchor-id="check-for-mates">Check for mates</h3>
+<p>All nest boxes should have two parents</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(m_clean, nest_box) <span class="sc">|&gt;</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">!=</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+  nest_box     n
+  &lt;chr&gt;    &lt;int&gt;
+1 KC04         1
+2 KC21         1
+3 KC49         1
+4 KC58         1</code></pre>
+</div>
+</div>
+<p>KC04, KC21, KC58 have been dealt with, what about KC49?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(m_clean, nest_box <span class="sc">==</span> <span class="st">"KC49"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  nest_box animal_id sex   egg_date   hatch_date fledge_date rfid_time_start     rfid_time_end      
+  &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;date&gt;     &lt;date&gt;     &lt;date&gt;      &lt;dttm&gt;              &lt;dttm&gt;             
+1 KC49     01103F72… F     2023-05-09 2023-05-27 2023-06-15  2023-05-29 00:00:00 2023-06-07 09:26:00
+# ℹ 2 more variables: band_date &lt;date&gt;, animal_id2 &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_by</span>(d_clean, <span class="at">id =</span> <span class="st">"KC49"</span>, <span class="at">by =</span> <span class="st">"animal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02_clean_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Only one individual… presumably only one was tagged.</p>
+</section>
+</section>
+<section id="finalizing" class="level2">
+<h2 class="anchored" data-anchor-id="finalizing">Finalizing</h2>
+<p>To keep things clean, we will remove birds with problems for whom the nest failed.</p>
+<p>We’ll also omit UR56 as we have no correct times for that logger</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>omit <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"KC62"</span>, <span class="st">"KC21"</span>, <span class="st">"KC15"</span>, <span class="st">"KC04"</span>, <span class="st">"UR56"</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>m_clean <span class="ot">&lt;-</span> <span class="fu">mutate</span>(m_clean, <span class="at">omit =</span> nest_box <span class="sc">%in%</span> omit)</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>d_clean <span class="ot">&lt;-</span> <span class="fu">filter</span>(d_clean, <span class="sc">!</span>logger_id <span class="sc">%in%</span> omit)</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(d_clean, <span class="st">"Data/Datasets/logger_clean.csv"</span>)</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(m_clean, <span class="st">"Data/Datasets/meta_clean.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="to-check" class="level2">
+<h2 class="anchored" data-anchor-id="to-check">To check</h2>
+<ul>
+<li>Check the birds who’s nests failed… should we be omitting all of them?<br>
+</li>
+<li>Check bird 0700EDB80A. Did they disappear from their site? Or did their RFID tag malfunction</li>
+<li>Check for missing KC66 logger files, did the logger fail? Or are the files just somewhere else?</li>
+<li>Check/add 011016BB3E to the metadata (from nest box KC58)</li>
+<li>Check/add 01103F5E98 to the metadata (from nest box KC21) [but only a few visits…]</li>
+<li>Check the start dates for the RFID tags in the metadata for 011016D09D and 0700EE2AF9, do they need to be corrected? (For nest box KC15)</li>
+</ul>
+</section>
+<section id="reproducibility" class="level2">
+<h2 class="anchored" data-anchor-id="reproducibility">Reproducibility</h2>
+<section id="packages" class="level3">
+<h3 class="anchored" data-anchor-id="packages">Packages</h3>
+<p>You probably only need to cite feedr and possibly the tidyverse, but you should keep track of the packages used and their versions (under General Info).</p>
+<section id="tidyverse" class="level4">
+<h4 class="anchored" data-anchor-id="tidyverse">tidyverse</h4>
+<p>Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” <em>Journal of Open Source Software</em>, <em>4</em>(43), 1686. doi:10.21105/joss.01686 <a href="https://doi.org/10.21105/joss.01686" class="uri">https://doi.org/10.21105/joss.01686</a>.</p>
+</section>
+<section id="feedr" class="level4">
+<h4 class="anchored" data-anchor-id="feedr">feedr</h4>
+<p>LaZerte SE, Reudink MW, Otter KA, Kusack J, Bailey JM, Woolverton A, Paetkau M, de Jong A, Hill DJ (2017). “feedr and animalnexus.ca: A paired R package and user-friendly Web application for transforming and visualizing animal movement data from static stations.” <em>Ecology and Evolution</em>, <em>7</em>(19), 7884-7896. doi:10.1002/ece3.3240 <a href="https://doi.org/10.1002/ece3.3240" class="uri">https://doi.org/10.1002/ece3.3240</a>.</p>
+</section>
+</section>
+<section id="general-info" class="level3">
+<h3 class="anchored" data-anchor-id="general-info">General info</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">session_info</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.3.2 (2023-10-31)
+ os       Ubuntu 22.04.3 LTS
+ system   x86_64, linux-gnu
+ ui       X11
+ language en_CA:en
+ collate  en_CA.UTF-8
+ ctype    en_CA.UTF-8
+ tz       America/Winnipeg
+ date     2023-11-14
+ pandoc   3.1.1 @ /usr/lib/rstudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────
+ package     * version date (UTC) lib source
+ bit           4.0.5   2022-11-15 [1] CRAN (R 4.3.0)
+ bit64         4.0.5   2020-08-30 [1] CRAN (R 4.3.0)
+ cachem        1.0.8   2023-05-01 [1] CRAN (R 4.3.0)
+ callr         3.7.3   2022-11-02 [1] CRAN (R 4.3.0)
+ cli           3.6.1   2023-03-23 [1] CRAN (R 4.3.0)
+ colorspace    2.1-0   2023-01-23 [1] CRAN (R 4.3.0)
+ crayon        1.5.2   2022-09-29 [1] CRAN (R 4.3.0)
+ crosstalk     1.2.0   2021-11-04 [1] CRAN (R 4.3.0)
+ devtools      2.4.5   2022-10-11 [1] CRAN (R 4.3.0)
+ digest        0.6.33  2023-07-07 [1] CRAN (R 4.3.1)
+ dplyr       * 1.1.3   2023-09-03 [1] CRAN (R 4.3.1)
+ ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.3.0)
+ evaluate      0.23    2023-11-01 [1] CRAN (R 4.3.1)
+ fansi         1.0.5   2023-10-08 [1] CRAN (R 4.3.1)
+ farver        2.1.1   2022-07-06 [1] CRAN (R 4.3.0)
+ fastmap       1.1.1   2023-02-24 [1] CRAN (R 4.3.0)
+ feedr       * 0.11.0  2023-11-14 [1] local
+ forcats     * 1.0.0   2023-01-29 [1] CRAN (R 4.3.0)
+ fs            1.6.3   2023-07-20 [1] CRAN (R 4.3.1)
+ generics      0.1.3   2022-07-05 [1] CRAN (R 4.3.0)
+ ggplot2     * 3.4.4   2023-10-12 [1] CRAN (R 4.3.1)
+ glue          1.6.2   2022-02-24 [1] CRAN (R 4.3.0)
+ gtable        0.3.4   2023-08-21 [1] CRAN (R 4.3.1)
+ hms           1.1.3   2023-03-21 [1] CRAN (R 4.3.0)
+ htmltools     0.5.7   2023-11-03 [1] CRAN (R 4.3.1)
+ htmlwidgets   1.6.2   2023-03-17 [1] CRAN (R 4.3.0)
+ httpuv        1.6.12  2023-10-23 [1] CRAN (R 4.3.1)
+ jsonlite      1.8.7   2023-06-29 [1] CRAN (R 4.3.1)
+ knitr         1.45    2023-10-30 [1] CRAN (R 4.3.1)
+ later         1.3.1   2023-05-02 [1] CRAN (R 4.3.1)
+ leaflet       2.2.0   2023-08-31 [1] CRAN (R 4.3.1)
+ lifecycle     1.0.3   2022-10-07 [1] CRAN (R 4.3.0)
+ lubridate   * 1.9.3   2023-09-27 [1] CRAN (R 4.3.1)
+ magrittr      2.0.3   2022-03-30 [1] CRAN (R 4.3.0)
+ memoise       2.0.1   2021-11-26 [1] CRAN (R 4.3.0)
+ mime          0.12    2021-09-28 [1] CRAN (R 4.3.0)
+ miniUI        0.1.1.1 2018-05-18 [1] CRAN (R 4.3.0)
+ munsell       0.5.0   2018-06-12 [1] CRAN (R 4.3.0)
+ patchwork   * 1.1.3   2023-08-14 [1] CRAN (R 4.3.1)
+ pillar        1.9.0   2023-03-22 [1] CRAN (R 4.3.0)
+ pkgbuild      1.4.2   2023-06-26 [1] CRAN (R 4.3.1)
+ pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.3.0)
+ pkgload       1.3.3   2023-09-22 [1] CRAN (R 4.3.1)
+ prettyunits   1.2.0   2023-09-24 [1] CRAN (R 4.3.1)
+ processx      3.8.2   2023-06-30 [1] CRAN (R 4.3.1)
+ profvis       0.3.8   2023-05-02 [1] CRAN (R 4.3.1)
+ promises      1.2.1   2023-08-10 [1] CRAN (R 4.3.1)
+ ps            1.7.5   2023-04-18 [1] CRAN (R 4.3.0)
+ purrr       * 1.0.2   2023-08-10 [1] CRAN (R 4.3.1)
+ R6            2.5.1   2021-08-19 [1] CRAN (R 4.3.0)
+ Rcpp          1.0.11  2023-07-06 [1] CRAN (R 4.3.1)
+ readr       * 2.1.4   2023-02-10 [1] CRAN (R 4.3.0)
+ remotes       2.4.2.1 2023-07-18 [1] CRAN (R 4.3.1)
+ rlang         1.1.2   2023-11-04 [1] CRAN (R 4.3.1)
+ rmarkdown     2.25    2023-09-18 [1] CRAN (R 4.3.1)
+ rstudioapi    0.15.0  2023-07-07 [1] CRAN (R 4.3.1)
+ scales        1.2.1   2022-08-20 [1] CRAN (R 4.3.0)
+ sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.3.0)
+ shiny         1.7.5.1 2023-10-14 [1] CRAN (R 4.3.1)
+ stringi       1.7.12  2023-01-11 [1] CRAN (R 4.3.0)
+ stringr     * 1.5.0   2022-12-02 [1] CRAN (R 4.3.0)
+ tibble      * 3.2.1   2023-03-20 [1] CRAN (R 4.3.0)
+ tidyr       * 1.3.0   2023-01-24 [1] CRAN (R 4.3.0)
+ tidyselect    1.2.0   2022-10-10 [1] CRAN (R 4.3.0)
+ tidyverse   * 2.0.0   2023-02-22 [1] CRAN (R 4.3.0)
+ timechange    0.2.0   2023-01-11 [1] CRAN (R 4.3.0)
+ tzdb          0.4.0   2023-05-12 [1] CRAN (R 4.3.1)
+ urlchecker    1.0.1   2021-11-30 [1] CRAN (R 4.3.0)
+ usethis       2.2.2   2023-07-06 [1] CRAN (R 4.3.1)
+ utf8          1.2.4   2023-10-22 [1] CRAN (R 4.3.1)
+ vctrs         0.6.4   2023-10-12 [1] CRAN (R 4.3.1)
+ viridisLite   0.4.2   2023-05-02 [1] CRAN (R 4.3.1)
+ vroom         1.6.4   2023-10-02 [1] CRAN (R 4.3.1)
+ withr         2.5.2   2023-10-30 [1] CRAN (R 4.3.1)
+ xfun          0.41    2023-11-01 [1] CRAN (R 4.3.1)
+ xtable        1.8-4   2019-04-21 [1] CRAN (R 4.3.0)
+ yaml          2.3.7   2023-01-23 [1] CRAN (R 4.3.0)
+
+ [1] /home/steffi/R/x86_64-pc-linux-gnu-library/4.3
+ [2] /usr/local/lib/R/site-library
+ [3] /usr/lib/R/site-library
+ [4] /usr/lib/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
