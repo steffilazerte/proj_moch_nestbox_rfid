@@ -225,10 +225,10 @@ ps  <- filter(ps, logger_id != "KC07")
 
 write_csv(v, "Data/Datasets/visits.csv")
 write_csv(vs_hr, "Data/Datasets/visits_summary_hour.csv")
-write_csv(vs, "Data/Datasets/visits_summary.csv")
+write_csv(vs, "Data/Datasets/visits_summary_day.csv")
 write_csv(p, "Data/Datasets/presence.csv")
 write_csv(ps_hr, "Data/Datasets/presence_summary_hour.csv")
-write_csv(ps, "Data/Datasets/presence_summary.csv")
+write_csv(ps, "Data/Datasets/presence_summary_day.csv")
 ```
 
 ### Data Columns
